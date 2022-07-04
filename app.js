@@ -1,9 +1,12 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const history = require('connect-history-api-fallback');
+const createError = require('http-errors'),
+    express = require('express'),
+    path = require('path'),
+    cookieParser = require('cookie-parser'),
+    logger = require('morgan'),
+    history = require('connect-history-api-fallback')
+
+
+
 
 // const indexRouter = require('./routes/index');
 const api = require('./routes/api')
@@ -42,7 +45,10 @@ app
     .use(cookieParser())
     .use(express.static(path.join(__dirname, 'public')))
 
-// app.use('/', indexRouter);
+
+
+
+
 app.use('/api', api)
 
 // catch 404 and forward to error handler
