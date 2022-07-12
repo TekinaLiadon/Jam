@@ -8,11 +8,12 @@ const express = require('express'),
 
 
 router.post('/login', (req, res, next) => {
-    const userCheck = `SELECT username, password, id FROM global WHERE username=? LIMIT 1`
-    const loginReg = `SELECT username, FROM ${req.headers.project} WHERE username=? LIMIT 1`
-    const hashCheck = `SELECT hash FROM global WHERE id=?`
+    const userCheck = `SELECT username, password, id, ${req.body.project} FROM global WHERE username=? LIMIT 1`
+    const loginReg = `SELECT username, blacklist FROM ${req.body.project} WHERE username=? LIMIT 1`
+    const registrationProject = `INSERT INTO ${req.body.project} (username,blacklist,hash,role) VALUES ( ?, ?, ?, ? )`
+    const hashCheck = `SELECT hash FROM global WHERE id=? LIMIT 1`
+    const blacklistCheck = `SELECT blacklist FROM ${req.body.project} WHERE username=? LIMIT 1`
     let info = ''
-
 
     if (req.headers.authorization) {
         jwt.verify(
@@ -20,35 +21,51 @@ router.post('/login', (req, res, next) => {
             process.env.TOKEN_KEY, function (err, decoded) {
                 if (!decoded) res.status(404).json({message: 'Token not found'})
                 else {
-                    pool(hashCheck, [decoded.id])
+                    Promise.all([
+                        pool(hashCheck, [decoded.id]),
+                        pool(blacklistCheck, [decoded.username])
+                    ])
                         .then((result) => {
-                            if (result[0].hash !== null) res.status(200).json({
+                            if (result[1].blacklist === 1) res.status(404).json({message: 'User is banned'})
+                            else if (result[0].hash !== null) res.status(200).json({
                                 username: decoded.username,
                             })
-                            else res.status(404).json({message: 'Token invalided'}) // капча
+                            else res.status(404).json({message: 'Token invalided'}) 
                         })
                         .catch((err) => {
-                        console.log(err) // логировать
-                        res.status(500)
-                    })
+                            console.log(err) // логировать
+                            res.status(500)
+                        })
                 }
             })
     } else {
         pool(userCheck, [req.body.username])
             .then((result) => {
                 info = result[0]
-                return decipher(req.body.password, result[0].password)
+                return Promise.all([
+                    decipher(req.body.password, result[0].password),
+                    cipher(result[0].username),
+                    pool(loginReg, [result[0].username])
+                ])
             })
             .then((result) => {
-                return result ? cipher(info.username) : false
+                info.hash = result[1]
+                if (!result[0]) throw new Error()
+                else if (result[2][0]?.blacklist === 1) throw new Error()
+                else if (!result[2][0]?.username) return pool(registrationProject, [req.body.username, 0, result[1], 'user'])
+                else throw new Error()
             })
-            .then((result) => {
-                if (result) res.status(200).json({
+            .then(() =>{
+                res.status(200).json({
                     id: info.id,
                     username: info.username,
-                    token: jwt.sign({id: info.id, username: info.username, hash: result,}, process.env.TOKEN_KEY),
+                    project: req.body.project,
+                    token: jwt.sign({
+                        id: info.id,
+                        username: info.username,
+                        hash: info.hash,
+                    }, process.env.TOKEN_KEY)
                 })
-                else res.status(404).json({message: 'Password error'})
             })
             .catch(() => res.status(404).json({message: 'User not found'}))
     }
@@ -56,37 +73,37 @@ router.post('/login', (req, res, next) => {
 })
 
 router.post('/registration', (req, res, next) => {
-    const registrationSQL = `INSERT INTO global (username,PASSWORD,email,hash,blacklist,role) VALUES ( ?, ?, ?, ?, ?, ? )`
-    const projectReg = `INSERT INTO ${req.headers.project} (username,blacklist,role) VALUES ( ?, ?, ? )`
-    const hashUpdate = `UPDATE global SET hash = ? WHERE id = ?`
+    const registrationSQL = `INSERT INTO global (username,PASSWORD,email,blacklist,role,${req.body.project}) VALUES ( ?, ?, ?, ?, ?, ? )`
+    const projectReg = `INSERT INTO ${req.body.project} (username,blacklist,hash,role) VALUES ( ?, ?, ?, ? )`
     let hash = ''
-    let id = 0
 
     cipher(req.body.password)
         .then((result) => {
-            return pool(registrationSQL, [req.body.username, result, req.body.email || null, null, 0, 'user'])
+            return Promise.all([
+                pool(registrationSQL, [req.body.username, result, req.body.email || null, 0, 'user', 1]),
+                cipher(req.body.username),
+            ])
         })
         .then((result) => {
-            id = parseInt(result.insertId, 10)
-            return cipher(req.body.username)
-        })
-        .then((result) => {
-            hash = result
-            return pool(hashUpdate, [result, id])
-        })
-        .then(() => {
-            return pool(projectReg, [req.body.username, 0, 'user'])
+            hash = result[1]
+            return pool(projectReg, [req.body.username, 0, result[1], 'user'])
         })
         .then(() => res.status(200).json({
             username: req.body.username,
-            token: jwt.sign({id: id, username: req.body.username, hash: hash}, process.env.TOKEN_KEY),
+            project: req.body.project,
+            token: jwt.sign({
+                username: req.body.username,
+                hash: hash,
+                project: req.body.project
+            }, process.env.TOKEN_KEY),
         }))
         .catch((err) => err ?
-            res.status(400)
-                .json({
-                    error: err.text
-                })
-            : res.status(500))
+                res.status(400)
+                    .json({
+                        error: err.text
+                    })
+                : res.status(500)
+        )
 })
 
 router.get('/info', function (req, res, next) {
@@ -208,7 +225,32 @@ router.post('/changeEmail', (req, res, next) => {
 })
 
 router.post('/blacklist', (req, res, next) => {
-    next(createError(401))
+    const projectBan = `UPDATE ${req.headers.project} SET blacklist = ? WHERE username = ?`
+    const adminCheck = `SELECT role FROM ${req.headers.project} WHERE username = ? AND role = 'admin'`
+
+    jwt.verify(
+        req.headers.authorization.split(' ')[1],
+        process.env.TOKEN_KEY, function (err, decoded) {
+            if (!decoded) res.status(404).json({message: 'Token not found'})
+            else {
+                pool(adminCheck, [decoded.username])
+                    .then((result) => {
+                        if (result[0]?.role) return req.body.command === 'ban' ?
+                            pool(projectBan, [1, req.body.username]) :
+                            pool(projectBan, [0, req.body.username])
+                        else return 'No rights'
+                    })
+                    .then((result) => {
+                        if (result === 'No rights') res.status(200).json({
+                            message: 'User is baned'
+                        })
+                        else res.status(200).json({
+                            message: 'Error'
+                        })
+                    })
+                    .catch(() => res.status(500))
+            }
+        })
 })
 
 router.post('/blacklistAll', (req, res, next) => {
@@ -216,7 +258,33 @@ router.post('/blacklistAll', (req, res, next) => {
 })
 
 router.post('/addProject', (req, res, next) => {
-    next(createError(403))
+    const adminCheck = `SELECT role FROM global WHERE username = ? AND role = 'admin'`
+    const addProject = `CREATE TABLE ${req.body.project} (username varchar(20) NOT NULL UNIQUE, role varchar(20), hash varchar(64), blacklist boolean )`
+    const addColumn = `ALTER TABLE global ADD COLUMN ${req.body.project} varchar(20)`
+    jwt.verify(
+        req.headers.authorization.split(' ')[1],
+        process.env.TOKEN_KEY, function (err, decoded) {
+            if (!decoded) res.status(404).json({message: 'Token not found'})
+            else {
+                pool(adminCheck, [decoded.username])
+                    .then((result) => {
+                        return result[0]?.role ?
+                            Promise.all([
+                                pool(addProject, []),
+                                pool(addColumn, [])
+                            ]) : 'No rights'
+                    })
+                    .then((result) => {
+                        if (result === 'No rights') res.status(200).json({
+                            message: 'Error'
+                        })
+                        else res.status(200).json({
+                            message: 'Add project'
+                        })
+                    })
+                    .catch(() => res.status(500))
+            }
+        })
 })
 
 
