@@ -6,9 +6,6 @@ const createError = require('http-errors'),
     history = require('connect-history-api-fallback')
 
 
-
-
-// const indexRouter = require('./routes/index');
 const api = require('./routes/api')
 
 const app = express();
