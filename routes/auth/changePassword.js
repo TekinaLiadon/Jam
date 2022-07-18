@@ -1,6 +1,6 @@
-const pool = require('../database/index'),
+const pool = require('../../database'),
     jwt = require('jsonwebtoken'),
-    cipher = require('../crypto/cipher')
+    cipher = require('../../crypto/cipher')
 
 function changePassword (req, res) {
     const passwordUpdate = `UPDATE ${req.headers.project} SET password = ? WHERE id = ?`

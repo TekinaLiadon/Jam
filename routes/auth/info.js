@@ -1,4 +1,4 @@
-const pool = require('../database/index')
+const pool = require('../../database')
 
 function giveInfo (req, res) {
     const infoSQL = `SELECT username, role, blacklist  FROM ${req.headers.project} WHERE  username = ?`

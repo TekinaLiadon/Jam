@@ -3,6 +3,7 @@ const createError = require('http-errors'),
     path = require('path'),
     cookieParser = require('cookie-parser'),
     logger = require('morgan'),
+    rfs = require('rotating-file-stream'),
     history = require('connect-history-api-fallback')
 
 
@@ -35,8 +36,25 @@ app.use(history({
 }));
 app.set('views', path.join(__dirname, 'views'));
 
+const pad = num => (num > 9 ? '' : '0') + num
+const generator = (time, index) => {
+    if(!time) return path.normalize(__dirname +'/logs/server.log')
+    const month = time.getFullYear() + '' + pad(time.getMonth() + 1)
+    const day = pad(time.getDate())
+    const hour = pad(time.getHours())
+    const minute = pad(time.getMinutes())
+    return path.normalize(__dirname + '/logs/' + `${month}-${month}${day}-${hour}${minute}-${index}-server.log`)
+}
+
+const rfsStream = rfs.createStream(generator, {
+    size: '10M',
+    interval: '1d',
+    compress: 'gzip'
+})
+
 app
-    .use(logger('dev'))
+    .use(logger('dev', {stream: rfsStream}))
+    .use(logger('dev')) // console log
     .use(express.json())
     .use(express.urlencoded({extended: false}))
     .use(cookieParser())

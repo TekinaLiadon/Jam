@@ -1,14 +1,14 @@
-const pool = require('../database/index'),
+const pool = require('../../database'),
     jwt = require('jsonwebtoken'),
-    cipher = require('../crypto/cipher'),
-    decipher = require('../crypto/decipher')
+    cipher = require('../../crypto/cipher'),
+    decipher = require('../../crypto/decipher')
 
 
 function loginUser(req, res) {
     const userCheck = `SELECT username, password, id, ${req.body.project} FROM global WHERE username=? LIMIT 1`
     const loginReg = `SELECT username, blacklist FROM ${req.body.project} WHERE username=? LIMIT 1`
     const registrationProject = `INSERT INTO ${req.body.project} (username,blacklist,hash,role) VALUES ( ?, ?, ?, ? )`
-    const hashCheck = `SELECT hash FROM global WHERE id=? LIMIT 1`
+    const hashCheck = `SELECT hash FROM ${req.body.project} WHERE username=? LIMIT 1`
     const blacklistCheck = `SELECT blacklist FROM ${req.body.project} WHERE username=? LIMIT 1`
     let info = ''
 
@@ -19,7 +19,7 @@ function loginUser(req, res) {
                 if (!decoded) res.status(404).json({message: 'Token not found'})
                 else {
                     Promise.all([
-                        pool(hashCheck, [decoded.id]),
+                        pool(hashCheck, [decoded.username]),
                         pool(blacklistCheck, [decoded.username])
                     ])
                         .then((result) => {

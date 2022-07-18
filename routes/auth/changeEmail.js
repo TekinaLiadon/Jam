@@ -1,4 +1,4 @@
-const pool = require('../database/index'),
+const pool = require('../../database'),
     jwt = require('jsonwebtoken')
 
 function changeEmail(req, res)  {

@@ -1,7 +1,7 @@
 const express = require('express'),
-    pool = require('../database/index'),
+    pool = require('../../database'),
     jwt = require('jsonwebtoken'),
-    cipher = require('../crypto/cipher')
+    cipher = require('../../crypto/cipher')
 
 
 function registration(req, res) {
