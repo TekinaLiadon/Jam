@@ -1,0 +1,10 @@
+{
+  "username" : "varchar(20)",
+  "password": "varchar(64)",
+  "email": "varchar(20)",
+  "role": "varchar(20)",
+  "hash": "varchar(64)",
+  "blacklist": "boolean"
+}
+// CREATE TABLE global (id int NOT NULL AUTO_INCREMENT, username varchar(20) NOT NULL UNIQUE, password varchar(64) NOT NULL, email varchar(20), hash varchar(64), role varchar(20), blacklist boolean, PRIMARY KEY(id) )
+// CREATE TABLE test333 (username varchar(20) NOT NULL UNIQUE, role varchar(20), blacklist boolean )
