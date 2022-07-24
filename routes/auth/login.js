@@ -1,7 +1,8 @@
 const pool = require('../../database'),
     jwt = require('jsonwebtoken'),
     cipher = require('../../crypto/cipher'),
-    decipher = require('../../crypto/decipher')
+    decipher = require('../../crypto/decipher'),
+    headers = require('../../utils/headers')
 
 
 function loginUser(req, res) {
@@ -26,11 +27,12 @@ function loginUser(req, res) {
                             if (result[1].blacklist === 1) res.status(404).json({message: 'User is banned'})
                             else if (result[0].hash !== null) res.status(200).json({
                                 username: decoded.username,
+                                project: decoded.project,
+                                id: decoded.id
                             })
                             else res.status(404).json({message: 'Token invalided'})
                         })
-                        .catch((err) => {
-                            console.log(err) // логировать
+                        .catch(() => {
                             res.status(500)
                         })
                 }
@@ -52,7 +54,9 @@ function loginUser(req, res) {
                 else return '+'
             })
             .then(() =>{
-                res.status(200).json({
+                res.status(200)
+                    .set(headers.cache)
+                    .json({
                     id: info.id,
                     username: info.username,
                     project: req.body.project,
@@ -60,6 +64,7 @@ function loginUser(req, res) {
                         id: info.id,
                         username: info.username,
                         hash: info.hash,
+                        project: req.body.project,
                     }, process.env.TOKEN_KEY)
                 })
             })
