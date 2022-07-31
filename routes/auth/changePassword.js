@@ -3,7 +3,7 @@ const pool = require('../../database'),
     cipher = require('../../crypto/cipher')
 
 function changePassword (req, res) {
-    const passwordUpdate = `UPDATE ${req.headers.project} SET password = ? WHERE id = ?`
+    const passwordUpdate = `UPDATE global SET password = ? WHERE id = ?`
     jwt.verify(
         req.headers.authorization.split(' ')[1],
         process.env.TOKEN_KEY, function (err, decoded) {
@@ -15,12 +15,16 @@ function changePassword (req, res) {
                     })
                     .then(() => {
                         res.status(200).json({
+                            id: decoded.id,
                             username: decoded.username,
+                            project: decoded.project,
+                            role: decoded.role,
                         })
                     })
                     .catch((err) => {
-                        console.log(err) // логировать
-                        res.status(500)
+                        res.status(500).json({
+                            err: err.text
+                        })
                     })
             }
         })

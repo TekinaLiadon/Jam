@@ -5,33 +5,39 @@ const express = require('express'),
 
 
 function registration(req, res) {
-    const registrationSQL = `INSERT INTO global (username,PASSWORD,email,blacklist,role,${req.body.project}) VALUES ( ?, ?, ?, ?, ?, ? )`
-    const projectReg = `INSERT INTO ${req.body.project} (username,blacklist,role) VALUES ( ?, ?, ? )`
+    const registrationSQL = `INSERT INTO global (username,PASSWORD,role) VALUES ( ?, ?, ? )`
+    const projectReg = `INSERT INTO ${req.body.project} (id,blacklist,role) VALUES ( ?, ?, ? )`
+    const sub_infoReg = `INSERT INTO sub_info (id, email, blacklist) VALUES ( ?, ?, ? )`
+    let id = 0
 
     cipher(req.body.password)
         .then((result) => {
+            return pool(registrationSQL, [req.body.username, result, 'user', 1])
+        })
+        .then((result) => {
+            id = parseInt(result.insertId, 10)
             return Promise.all([
-                pool(registrationSQL, [req.body.username, result, req.body.email || null, 0, 'user', 1]),
-                pool(projectReg, [req.body.username, 0, 'user'])
+                pool(sub_infoReg, [parseInt(result.insertId, 10), req.body.email || null, 0,]),
+                pool(projectReg, [parseInt(result.insertId, 10), 0, 'user'])
             ])
         })
-        .then(() => pool(projectReg, [req.body.username, 0, 'user']))
-        .then((result) => {
-            console.log(result)
+        .then(() => {
             res.status(200).json({
-            username: req.body.username,
-            project: req.body.project,
-            token: jwt.sign({
                 username: req.body.username,
-                project: req.body.project
-            }, process.env.TOKEN_KEY),
-        })})
-        .catch((err) => err ?
-            res.status(400)
-                .json({
-                    error: err.text
-                })
-            : res.status(500)
+                project: req.body.project,
+                id: id,
+                role: 'user',
+                token: jwt.sign({
+                    username: req.body.username,
+                    project: req.body.project,
+                    id: id,
+                    role: 'user',
+                }, process.env.TOKEN_KEY),
+            })
+        })
+        .catch((err) => res.status(500).json({
+                err: err.text
+            })
         )
 }
 

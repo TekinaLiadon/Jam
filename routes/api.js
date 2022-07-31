@@ -7,7 +7,6 @@ const express = require('express'),
 
 router.post('/login', authRoutes.loginUser)
 router.post('/registration', authRoutes.registration)
-// test route ->
 router.get('/info', authRoutes.giveInfo)
 router.get('/code', function (req, res, next) {
     next(createError(401))
@@ -15,6 +14,7 @@ router.get('/code', function (req, res, next) {
 router.post('/changePassword', authRoutes.changePassword)
 router.post('/changeUsername', authRoutes.changeUsername)
 router.post('/changeRole', authRoutes.changeRole)
+// test route ->
 router.post('/changeEmail', authRoutes.changeEmail)
 router.post('/blacklist', authRoutes.updateBlacklist)
 router.post('/blacklistAll', (req, res, next) => {
