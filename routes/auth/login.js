@@ -11,7 +11,6 @@ function loginUser(req, res) {
     const blacklistCheck = `SELECT blacklist FROM ${req.body.project} WHERE id=? LIMIT 1`
     let info = ''
 
-
     if (req.headers.authorization) {
         jwt.verify(
             req.headers.authorization.split(' ')[1],

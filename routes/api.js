@@ -4,7 +4,8 @@ const express = require('express'),
     authRoutes = require('./auth/routerList'),
     battleInfo = require('./sse/battleInfo')
 
-
+router.post('/login/discord', authRoutes.loginDiscord)
+router.post('/token/discord', authRoutes.tokenDiscord)
 router.post('/login', authRoutes.loginUser)
 router.post('/registration', authRoutes.registration)
 router.get('/info', authRoutes.giveInfo)
