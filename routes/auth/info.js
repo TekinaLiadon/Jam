@@ -1,8 +1,8 @@
 const pool = require('../../database')
 
 function giveInfo (req, res) {
-    const infoSQL = `SELECT username, role, blacklist FROM global, sub_info WHERE global.id = ?`
-    pool(infoSQL, [req.body.id]).then((result) => {
+    const infoSQL = `SELECT username, role, blacklist FROM global, sub_info WHERE global.username = ? LIMIT 1`
+    pool(infoSQL, [req.body.username]).then((result) => {
         if (!result[0]) res.status(400)
             .json({
                 error: 'User not found'

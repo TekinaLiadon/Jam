@@ -17,8 +17,6 @@ function changePassword (req, res) {
                         res.status(200).json({
                             id: decoded.id,
                             username: decoded.username,
-                            project: decoded.project,
-                            role: decoded.role,
                         })
                     })
                     .catch((err) => {

@@ -10,11 +10,11 @@ function changeUsername(req, res)  {
             else {
                 pool(usernameUpdate, [req.body.username, decoded.id]).then(() => {
                     res.status(200).json({
+                        username: req.body.username,
                         token: jwt.sign({
                             id: decoded.id,
-                            project: decoded.project,
-                            role: decoded.role,
                             username: req.body.username,
+                            access_token: decoded.access_token,
                         }, process.env.TOKEN_KEY),
                     })
                 }).catch((err) => {

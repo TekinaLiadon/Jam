@@ -15,13 +15,8 @@ router.get('/code', function (req, res, next) {
 router.post('/changePassword', authRoutes.changePassword)
 router.post('/changeUsername', authRoutes.changeUsername)
 router.post('/changeRole', authRoutes.changeRole)
-// test route ->
 router.post('/changeEmail', authRoutes.changeEmail)
 router.post('/blacklist', authRoutes.updateBlacklist)
-router.post('/blacklistAll', (req, res, next) => {
-    next(createError(403))
-})
-router.post('/addProject', authRoutes.addProject)
 router.post('/deleteUser', (req, res, next) => {
     next(createError(403))
 })
