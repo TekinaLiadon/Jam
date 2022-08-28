@@ -8,14 +8,13 @@ function changeEmail(req, res)  {
         process.env.TOKEN_KEY, function (err, decoded) {
             if (!decoded) res.status(404).json({message: 'Token not found'})
             else {
-                pool(emailUpdate, [req.body.email, decoded.id]).then((result) => {
-                    console.log(result)
+                pool(emailUpdate, [req.body.email, decoded.id]).then(() => {
                     res.status(200).json({
                         username: decoded.username,
                         email: req.body.email,
                     })
-                }).catch((err) => {
-                    console.log(err) // логировать
+                }).catch(() => {
+                    res.status(500)
                 })
             }
         })

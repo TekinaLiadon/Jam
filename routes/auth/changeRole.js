@@ -2,8 +2,8 @@ const pool = require('../../database'),
     jwt = require('jsonwebtoken')
 
 function changeRole (req, res) {
-    const userRole = `SELECT role FROM ${req.headers.project} WHERE id = ? AND role = 'admin'`
-    const roleUpdate = `UPDATE ${req.headers.project} SET role = ? WHERE username = ?`
+    const userRole = `SELECT role FROM global WHERE id = ? AND role = 'admin'`
+    const roleUpdate = `UPDATE global SET role = ? WHERE id = ?`
     jwt.verify(
         req.headers.authorization.split(' ')[1],
         process.env.TOKEN_KEY, function (err, decoded) {
@@ -11,7 +11,7 @@ function changeRole (req, res) {
             else {
                 pool(userRole, [decoded.id])
                     .then((result) => {
-                        if (result[0]) return pool(roleUpdate, [req.body.role, req.body.username]).then(() => {
+                        if (result[0]) return pool(roleUpdate, [req.body.role, decoded.id]).then(() => {
                             res.status(200).json({
                                 username: req.body.username,
                                 role: req.body.role,
@@ -19,9 +19,8 @@ function changeRole (req, res) {
                         })
                         else res.status(403).json({message: 'Token not found'})
                     })
-                    .catch((err) => {
-                        console.log(err) // логировать
-                        res.status(400).json({message: 'Token not found'})
+                    .catch(() => {
+                        res.status(500).json({message: 'Token not found'})
                     })
             }
         })

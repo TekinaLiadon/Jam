@@ -5,36 +5,32 @@ const express = require('express'),
 
 
 function registration(req, res) {
-    const registrationSQL = `INSERT INTO global (username,PASSWORD,email,blacklist,role,${req.body.project}) VALUES ( ?, ?, ?, ?, ?, ? )`
-    const projectReg = `INSERT INTO ${req.body.project} (username,blacklist,hash,role) VALUES ( ?, ?, ?, ? )`
-    let hash = ''
+    const registrationSQL = `INSERT INTO global (username,PASSWORD,role) VALUES ( ?, ?, ? )`
+    const sub_infoReg = `INSERT INTO sub_info (id, email, blacklist) VALUES ( ?, ?, ? )`
+    let id = 0
 
     cipher(req.body.password)
         .then((result) => {
-            return Promise.all([
-                pool(registrationSQL, [req.body.username, result, req.body.email || null, 0, 'user', 1]),
-                cipher(req.body.username),
-            ])
+            return pool(registrationSQL, [req.body.username, result, 'user', 1])
         })
         .then((result) => {
-            hash = result[1]
-            return pool(projectReg, [req.body.username, 0, result[1], 'user'])
+            id = parseInt(result.insertId, 10)
+            return pool(sub_infoReg, [parseInt(result.insertId, 10), req.body.email || null, 0,])
         })
-        .then(() => res.status(200).json({
-            username: req.body.username,
-            project: req.body.project,
-            token: jwt.sign({
+        .then(() => {
+            res.status(200).json({
                 username: req.body.username,
-                hash: hash,
-                project: req.body.project
-            }, process.env.TOKEN_KEY),
-        }))
-        .catch((err) => err ?
-            res.status(400)
-                .json({
-                    error: err.text
-                })
-            : res.status(500)
+                id: id,
+                role: 'user',
+                token: jwt.sign({
+                    username: req.body.username,
+                    id: id,
+                }, process.env.TOKEN_KEY),
+            })
+        })
+        .catch((err) => res.status(500).json({
+                err: err.text
+            })
         )
 }
 

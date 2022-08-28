@@ -4,7 +4,8 @@ const createError = require('http-errors'),
     cookieParser = require('cookie-parser'),
     logger = require('morgan'),
     rfs = require('rotating-file-stream'),
-    history = require('connect-history-api-fallback')
+    history = require('connect-history-api-fallback'),
+    cors = require('cors')
 
 
 const api = require('./routes/api')
@@ -38,7 +39,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 const pad = num => (num > 9 ? '' : '0') + num
 const generator = (time, index) => {
-    if(!time) return path.normalize(__dirname +'/logs/server.log')
+    if (!time) return path.normalize(__dirname + '/logs/server.log')
     const month = time.getFullYear() + '' + pad(time.getMonth() + 1)
     const day = pad(time.getDate())
     const hour = pad(time.getHours())
@@ -54,31 +55,31 @@ const rfsStream = rfs.createStream(generator, {
 
 app
     .use(logger('dev', {stream: rfsStream}))
-    .use(logger('dev')) // console log
     .use(express.json())
     .use(express.urlencoded({extended: false}))
     .use(cookieParser())
     .use(express.static(path.join(__dirname, 'public')))
+    .use(cors())
 
-
-
+if(process.env.NODE_ENV !== 'production') {
+    app.use(logger('dev')) // console log
+}
 
 
 app.use('/api', api)
 
-// catch 404 and forward to error handler
+
 app.use(function (req, res, next) {
     next(createError(404));
 });
 
 
-// error handler
+
 app.use(function (err, req, res, next) {
-    // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    // render the error page
+
     res.status(err.status || 500);
     res.json({error: err})
 });
