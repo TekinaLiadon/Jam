@@ -2,7 +2,7 @@ const pool = require('../../database'),
     jwt = require('jsonwebtoken')
 
 function changeUsername(req, res)  {
-    const usernameUpdate = `UPDATE ${req.headers.project} SET username = ? WHERE id = ?`
+    const usernameUpdate = `UPDATE global SET username = ? WHERE id = ?`
     jwt.verify(
         req.headers.authorization.split(' ')[1],
         process.env.TOKEN_KEY, function (err, decoded) {
@@ -14,12 +14,13 @@ function changeUsername(req, res)  {
                         token: jwt.sign({
                             id: decoded.id,
                             username: req.body.username,
-                            hash: decoded.hash
+                            access_token: decoded.access_token,
                         }, process.env.TOKEN_KEY),
                     })
                 }).catch((err) => {
-                    console.log(err) // логировать
-                    res.status(500)
+                    res.status(500).json({
+                        err: err.text
+                    })
                 })
             }
         })
