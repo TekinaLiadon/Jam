@@ -35,7 +35,6 @@ function refreshToken (req, res) {
                         return result.json()
                     })
                     .then((result) => {
-                        console.log(result, decoded.id)
                         info = result
                         return pool(updateTokens, [result.refresh_token, result.access_token, decoded.id])
                     })
