@@ -13,6 +13,7 @@
     id INT,
     email varchar(20),
    blacklist boolean,
+   discord_id varchar(20),
    FOREIGN KEY (id) REFERENCES global(id), PRIMARY KEY(id)
 ) */
 

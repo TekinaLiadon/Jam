@@ -2,6 +2,7 @@ const express = require('express'),
     router = express.Router(),
     createError = require('http-errors'),
     authRoutes = require('./auth/routerList'),
+    discordAPIRoutes = require('./discord/discordList'),
     battleInfo = require('./sse/battleInfo')
 
 router.post('/login/discord', authRoutes.loginDiscord)
@@ -23,6 +24,9 @@ router.post('/deleteUser', (req, res, next) => {
 router.post('/logout', (req, res, next) => {
     next(createError(403))
 })
+
+router.get('/guildsUser', discordAPIRoutes.guilds)
+router.get('/refreshToken', discordAPIRoutes.refreshToken)
 
 
 router.get('/events', battleInfo )

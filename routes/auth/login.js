@@ -24,10 +24,7 @@ function loginUser(req, res) {
                             if (result[0][0]) res.status(404).json({message: 'User is banned'})
                             else if (!result[1][0]) res.status(404).json({message: 'Access token invalid'})
                             else {
-                                res.status(200)
-                                    .json({
-                                        username: decoded.username,
-                            })
+                                res.redirect('refreshToken')
                             }
                         })
                         .catch(() => {

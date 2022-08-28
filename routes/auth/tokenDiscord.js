@@ -5,7 +5,7 @@ const pool = require('../../database'),
 
 async function getTokenUser(req, res) {
     const registrationSQL = `INSERT INTO global (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
-    const sub_infoReg = `INSERT INTO sub_info (id, email, blacklist) VALUES ( ?, ?, ? )`
+    const sub_infoReg = `INSERT INTO sub_info (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
 
     let id = 0
     let info = {}
@@ -30,6 +30,7 @@ async function getTokenUser(req, res) {
             })
             .then(json => {
                 info = json
+                console.log(`Bearer ${info.access_token}`)
                 return fetch('https://discord.com/api/users/@me', {
                     headers: {
                         authorization: `Bearer ${info.access_token}`
@@ -41,11 +42,11 @@ async function getTokenUser(req, res) {
             })
             .then((result) => {
                 info = Object.assign(info, result)
-                return pool(registrationSQL, [result.username, 'user', info.access_token, info.refresh_token])
+                return pool(registrationSQL, [result.username + result.discriminator, 'user', info.access_token, info.refresh_token])
             })
             .then((result) => {
                 id = parseInt(result.insertId, 10)
-                return pool(sub_infoReg, [id, info.email || null, 0,])
+                return pool(sub_infoReg, [id, info.email || null, 0, info.id])
             })
             .then(() => {
                 res.status(200).json({
@@ -55,9 +56,7 @@ async function getTokenUser(req, res) {
                     role: 'user',
                     token: jwt.sign({
                         username: info.username,
-                        project: req.body.project,
                         id: id,
-                        role: 'user',
                         access_token: info.access_token,
                     }, process.env.TOKEN_KEY),
                 })
