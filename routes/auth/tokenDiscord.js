@@ -4,8 +4,8 @@ const pool = require('../../database'),
     jwt = require('jsonwebtoken')
 
 async function getTokenUser(req, res) {
-    const registrationSQL = `INSERT INTO global (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
-    const sub_infoReg = `INSERT INTO sub_info (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
+    const registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
+    const sub_infoReg = `INSERT INTO ${process.env.CORE_TABLE_NAME} (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
 
     let id = 0
     let info = {}

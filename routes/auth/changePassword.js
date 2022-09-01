@@ -3,7 +3,7 @@ const pool = require('../../database'),
     cipher = require('../../crypto/cipher')
 
 function changePassword (req, res) {
-    const passwordUpdate = `UPDATE global SET password = ? WHERE id = ?`
+    const passwordUpdate = `UPDATE ${process.env.CORE_TABLE_NAME} SET password = ? WHERE id = ?`
     jwt.verify(
         req.headers.authorization.split(' ')[1],
         process.env.TOKEN_KEY, function (err, decoded) {

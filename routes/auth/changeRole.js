@@ -2,8 +2,8 @@ const pool = require('../../database'),
     jwt = require('jsonwebtoken')
 
 function changeRole (req, res) {
-    const userRole = `SELECT role FROM global WHERE id = ? AND role = 'admin'`
-    const roleUpdate = `UPDATE global SET role = ? WHERE id = ?`
+    const userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? AND role = 'admin'`
+    const roleUpdate = `UPDATE ${process.env.CORE_TABLE_NAME} SET role = ? WHERE id = ?`
     jwt.verify(
         req.headers.authorization.split(' ')[1],
         process.env.TOKEN_KEY, function (err, decoded) {

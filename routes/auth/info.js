@@ -1,7 +1,7 @@
 const pool = require('../../database')
 
 function giveInfo (req, res) {
-    const infoSQL = `SELECT username, role, blacklist FROM global, sub_info WHERE global.username = ? LIMIT 1`
+    const infoSQL = `SELECT username, role, blacklist FROM ${process.env.CORE_TABLE_NAME}, ${process.env.ADDITIONAL_TABLE_NAME} WHERE global.username = ? LIMIT 1`
     pool(infoSQL, [req.body.username]).then((result) => {
         if (!result[0]) res.status(400)
             .json({

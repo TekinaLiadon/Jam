@@ -3,8 +3,8 @@ const pool = require('../../database'),
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 function refreshToken (req, res) {
-    const getRefreshToken = 'SELECT refresh_token FROM global WHERE id = ? LIMIT 1'
-    const updateTokens = 'UPDATE global SET refresh_token = ?, access_token = ? WHERE id = ?'
+    const getRefreshToken = `SELECT refresh_token FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
+    const updateTokens = 'UPDATE ${process.env.CORE_TABLE_NAME} SET refresh_token = ?, access_token = ? WHERE id = ?'
 
     let info = {}
 
@@ -39,11 +39,12 @@ function refreshToken (req, res) {
                         return pool(updateTokens, [result.refresh_token, result.access_token, decoded.id])
                     })
                     .then(() => {
-                        res.status(200).json({ token: jwt.sign({
+                        if(!res.query.logout) res.status(200).json({ token: jwt.sign({
                             username: info.username,
                             id: decoded.id,
                             access_token: info.access_token,
                         }, process.env.TOKEN_KEY), })
+                        else res.status(200).json({ status: "exit" })
                     })
                     .catch(() => {
                         res.status(500)

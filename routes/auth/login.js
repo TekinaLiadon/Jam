@@ -4,9 +4,9 @@ const pool = require('../../database'),
 
 
 function loginUser(req, res) {
-    const userCheck = `SELECT username, password, id, role FROM global WHERE username=? LIMIT 1`
-    const blacklistCheck = `SELECT blacklist FROM sub_info WHERE id=? AND blacklist=1 LIMIT 1`
-    const accessTokenCheck = `SELECT access_token FROM global WHERE access_token=? AND id=? LIMIT 1`
+    const userCheck = `SELECT username, password, id, role FROM ${process.env.CORE_TABLE_NAME} WHERE username=? LIMIT 1`
+    const blacklistCheck = `SELECT blacklist FROM ${process.env.CORE_TABLE_NAME} WHERE id=? AND blacklist=1 LIMIT 1`
+    const accessTokenCheck = `SELECT access_token FROM ${process.env.CORE_TABLE_NAME} WHERE access_token=? AND id=? LIMIT 1`
     let info = ''
 
 

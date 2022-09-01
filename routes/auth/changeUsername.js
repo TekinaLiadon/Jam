@@ -2,7 +2,7 @@ const pool = require('../../database'),
     jwt = require('jsonwebtoken')
 
 function changeUsername(req, res)  {
-    const usernameUpdate = `UPDATE global SET username = ? WHERE id = ?`
+    const usernameUpdate = `UPDATE ${process.env.CORE_TABLE_NAME} SET username = ? WHERE id = ?`
     jwt.verify(
         req.headers.authorization.split(' ')[1],
         process.env.TOKEN_KEY, function (err, decoded) {

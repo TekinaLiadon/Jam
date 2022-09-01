@@ -2,6 +2,7 @@ const express = require('express'),
     router = express.Router(),
     createError = require('http-errors'),
     authRoutes = require('./auth/routerList'),
+    characterRoutes = require('./character/routerList'),
     discordAPIRoutes = require('./discord/discordList'),
     battleInfo = require('./sse/battleInfo')
 
@@ -21,9 +22,12 @@ router.post('/blacklist', authRoutes.updateBlacklist)
 router.post('/deleteUser', (req, res, next) => {
     next(createError(403))
 })
-router.post('/logout', (req, res, next) => {
-    next(createError(403))
+router.get('/logout', (req, res, next) => {
+    res.query.logout = true
+    res.redirect('refreshToken')
 })
+
+router.post('/createCharacter', characterRoutes.createCharacter)
 
 router.get('/guildsUser', discordAPIRoutes.guilds)
 router.get('/refreshToken', discordAPIRoutes.refreshToken)
