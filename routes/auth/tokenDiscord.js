@@ -5,7 +5,7 @@ const pool = require('../../database'),
 
 async function getTokenUser(req, res) {
     const registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
-    const sub_infoReg = `INSERT INTO ${process.env.CORE_TABLE_NAME} (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
+    const sub_infoReg = `INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
 
     let id = 0
     let info = {}
@@ -30,7 +30,6 @@ async function getTokenUser(req, res) {
             })
             .then(json => {
                 info = json
-                console.log(`Bearer ${info.access_token}`)
                 return fetch('https://discord.com/api/users/@me', {
                     headers: {
                         authorization: `Bearer ${info.access_token}`
@@ -46,7 +45,7 @@ async function getTokenUser(req, res) {
             })
             .then((result) => {
                 id = parseInt(result.insertId, 10)
-                return pool(sub_infoReg, [id, info.email || null, 0, info.id])
+                return pool(sub_infoReg, [id, info.email || null, 0, info.id]).catch((e) => console.log(e))
             })
             .then(() => {
                 res.status(200).json({

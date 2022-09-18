@@ -8,7 +8,8 @@ const routerList = {
     changeEmail: require('./changeEmail'),
     updateBlacklist: require('./blacklist'),
     loginDiscord: require('./loginDiscord'),
-    tokenDiscord: require('./tokenDiscord')
+    logout: require('./logout'),
+    tokenDiscord: require('./tokenDiscord'),
 }
 
 module.exports = routerList
