@@ -1,7 +1,6 @@
 var pool = require('../../database'),
     jwt = require('jsonwebtoken'),
     decipher = require('../../crypto/decipher'),
-    refreshToken = require('../../helpers/refreshToken')
     fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 
