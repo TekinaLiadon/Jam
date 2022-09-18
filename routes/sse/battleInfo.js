@@ -28,4 +28,4 @@ function countdown(res, count) {
         res.end()
 }
 
-module.exports = /*connect*/ countdown
+module.exports = connect
