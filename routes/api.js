@@ -6,7 +6,7 @@ const express = require('express'),
     discordAPIRoutes = require('./discord/discordList'),
     battleInfo = require('./sse/battleInfo')
 
-router.post('/login/discord', authRoutes.loginDiscord)
+router.get('/login/discord', authRoutes.loginDiscord)
 router.post('/token/discord', authRoutes.tokenDiscord)
 router.post('/login', authRoutes.loginUser)
 router.post('/registration', authRoutes.registration)
