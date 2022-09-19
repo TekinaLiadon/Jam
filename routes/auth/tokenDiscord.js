@@ -5,6 +5,8 @@ const pool = require('../../database'),
 
 async function getTokenUser(req, res) {
     const registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
+    const checkUser = `SELECT username FROM ${process.env.CORE_TABLE_NAME} WHERE username = ?`
+    const updateInfo = `UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ? refresh_token = ? WHERE username = ? `
     const sub_infoReg = `INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
 
     let id = 0
@@ -41,11 +43,16 @@ async function getTokenUser(req, res) {
             })
             .then((result) => {
                 info = Object.assign(info, result)
-                return pool(registrationSQL, [result.username + result.discriminator, 'user', info.access_token, info.refresh_token])
+                return pool(checkUser, [result.username + result.discriminator])
+            })
+            .then((result) => {
+                if(result[0].username) return pool(updateInfo, [info.access_token, info.refresh_token])
+                else return pool(registrationSQL, [result.username + result.discriminator, 'user', info.access_token, info.refresh_token])
+
             })
             .then((result) => {
                 id = parseInt(result.insertId, 10)
-                return pool(sub_infoReg, [id, info.email || null, 0, info.id]).catch((e) => console.log(e))
+                return pool(sub_infoReg, [id, info.email || null, 0, info.id])
             })
             .then(() => {
                 res.status(200).json({
