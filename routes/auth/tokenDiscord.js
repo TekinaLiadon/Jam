@@ -5,7 +5,7 @@ const pool = require('../../database'),
 
 async function getTokenUser(req, res) {
     const registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
-    const checkUser = `SELECT username FROM ${process.env.CORE_TABLE_NAME} WHERE username = ?`
+    const checkUser = `SELECT username, id FROM ${process.env.CORE_TABLE_NAME} WHERE username = ?`
     const updateInfo = `UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ?, refresh_token = ? WHERE username = ? `
     const sub_infoReg = `INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
 
@@ -46,7 +46,7 @@ async function getTokenUser(req, res) {
                 return pool(checkUser, [result.username + result.discriminator])
             })
             .then((result) => {
-                info = Object.assign(info, result)
+                info.insertId = result[0].id
                 if(result[0].username) return pool(updateInfo, [info.access_token, info.refresh_token, info.username + info.discriminator])
                 else return pool(registrationSQL, [info.username + info.discriminator, 'user', info.access_token, info.refresh_token])
 
