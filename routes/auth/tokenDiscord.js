@@ -41,7 +41,7 @@ async function getTokenUser(req, res) {
             })
             .then((result) => {
                 info = Object.assign(info, result)
-                return pool(registrationSQL, [result.username + `${result.discriminator}`, 'user', info.access_token, info.refresh_token])
+                return pool(registrationSQL, [result.username + result.discriminator, 'user', info.access_token, info.refresh_token])
             })
             .then((result) => {
                 id = parseInt(result.insertId, 10)

@@ -53,13 +53,19 @@ const rfsStream = rfs.createStream(generator, {
     compress: 'gzip'
 })
 
+const corsOptions ={
+    origin:'http://localhost:8080',
+    credentials:true,
+    optionSuccessStatus:200
+}
+
 app
     .use(logger('dev', {stream: rfsStream}))
     .use(express.json())
     .use(express.urlencoded({extended: false}))
     .use(cookieParser())
     .use(express.static(path.join(__dirname, 'public')))
-    .use(cors())
+    .use(cors(corsOptions))
 
 if(process.env.NODE_ENV !== 'production') {
     app.use(logger('dev')) // console log
