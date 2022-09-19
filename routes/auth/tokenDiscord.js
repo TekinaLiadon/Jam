@@ -6,7 +6,7 @@ const pool = require('../../database'),
 async function getTokenUser(req, res) {
     const registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
     const checkUser = `SELECT username FROM ${process.env.CORE_TABLE_NAME} WHERE username = ?`
-    const updateInfo = `UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ? refresh_token = ? WHERE username = ? `
+    const updateInfo = `UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ?, refresh_token = ? WHERE username = ? `
     const sub_infoReg = `INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
 
     let id = 0
