@@ -46,7 +46,7 @@ async function getTokenUser(req, res) {
                 return pool(checkUser, [result.username + result.discriminator])
             })
             .then((result) => {
-                if(result[0].username) return pool(updateInfo, [info.access_token, info.refresh_token])
+                if(result[0].username) return pool(updateInfo, [info.access_token, info.refresh_token, result.username + result.discriminator])
                 else return pool(registrationSQL, [result.username + result.discriminator, 'user', info.access_token, info.refresh_token])
 
             })
