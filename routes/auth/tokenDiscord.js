@@ -29,6 +29,7 @@ async function getTokenUser(req, res) {
                 return res.json()
             })
             .then(json => {
+                res.status(200).json(json)
                 info = json
                 return fetch('https://discord.com/api/users/@me', {
                     headers: {
