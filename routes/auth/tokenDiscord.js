@@ -46,10 +46,10 @@ async function getTokenUser(req, res) {
                 return pool(checkUser, [result.username + result.discriminator])
             })
             .then((result) => {
-                info.insertId = result[0].id
-                if(result[0].username) return pool(updateInfo, [info.access_token, info.refresh_token, info.username + info.discriminator])
+                info.insertId = result[0]?.id
+                if(result[0]?.username) return pool(updateInfo, [info.access_token, info.refresh_token, info.username + info.discriminator])
                 else return pool(registrationSQL, [info.username + info.discriminator, 'user', info.access_token, info.refresh_token])
-                    .then(() => pool(sub_infoReg, [parseInt(info.insertId, 10), info.email || null, 0, info.id]))
+                    .then((result) => pool(sub_infoReg, [parseInt(result.insertId, 10), info.email || null, 0, info.id]))
 
             })
             .then(() => {
