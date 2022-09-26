@@ -4,6 +4,7 @@ const express = require('express'),
     authRoutes = require('./auth/routerList'),
     characterRoutes = require('./character/characterList'),
     discordAPIRoutes = require('./discord/discordList'),
+    systemList = require('./gamesystem/systemList'),
     battleInfo = require('./sse/battleInfo')
 
 router.get('/login/discord', authRoutes.loginDiscord)
@@ -11,6 +12,16 @@ router.post('/token/discord', authRoutes.tokenDiscord)
 router.post('/login', authRoutes.loginUser)
 router.post('/registration', authRoutes.registration)
 router.get('/info', authRoutes.giveInfo)
+router.get('/abilitiesList', systemList.abilitiesList)
+router.get('/defAbilitiesList', systemList.defAbilitiesList)
+router.get('/characters', systemList.characters)
+router.get('/itemsHoldables', systemList.itemsHoldables)
+router.get('/itemsTrinkets', systemList.itemsTrinkets)
+router.get('/itemsClothes', systemList.itemsClothes)
+router.get('/itemsEnergyShields', systemList.itemsEnergyShields)
+router.get('/parts', systemList.parts)
+router.get('/clues', systemList.clues)
+router.get('/crises', systemList.crises)
 router.get('/code', function (req, res, next) {
     next(createError(401))
 })
