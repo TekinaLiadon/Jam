@@ -1,7 +1,7 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-function partsList(req, res) {
-    fetch(process.env.GAMESYSTEM_URL + '/parts/', {
+function defAbilitiesListList(req, res) {
+    fetch(process.env.GAMESYSTEM_URL + '/def_abilities/' + req.query.abilitiesName, {
         method: 'GET',
     })
         .then((result) => {
@@ -13,4 +13,4 @@ function partsList(req, res) {
         }))
 }
 
-module.exports = partsList
+module.exports = defAbilitiesListList
