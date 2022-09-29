@@ -5,6 +5,7 @@ const express = require('express'),
     characterRoutes = require('./character/characterList'),
     discordAPIRoutes = require('./discord/discordList'),
     systemList = require('./gamesystem/systemList'),
+    jsonRpcList = require('./jsonRpcGameSystem/routerList'),
     battleInfo = require('./sse/battleInfo')
 
 router.get('/login/discord', authRoutes.loginDiscord)
@@ -34,6 +35,8 @@ router.get('/clues', systemList.clues)
 router.get('/cluesList', systemList.cluesList)
 router.get('/crises', systemList.crises)
 router.get('/crisesList', systemList.crisesList)
+
+router.post('/getEntityAbilities', jsonRpcList.getEntityAbilities)
 
 router.get('/code', function (req, res, next) {
     next(createError(401))
