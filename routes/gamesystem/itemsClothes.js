@@ -1,7 +1,7 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-function itemsClothesList(req, res) {
-    fetch(process.env.GAMESYSTEM_URL + '/items/clothes/', {
+function itemsClothes(req, res) {
+    fetch(process.env.GAMESYSTEM_URL + '/items/clothes/' + req.query.itemName, {
         method: 'GET',
     })
         .then((result) => {
@@ -13,4 +13,4 @@ function itemsClothesList(req, res) {
         }))
 }
 
-module.exports = itemsClothesList
+module.exports = itemsClothes

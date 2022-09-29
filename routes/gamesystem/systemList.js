@@ -8,11 +8,18 @@ const routerList = {
     itemsHoldables: require('./itemsHoldables'),
     itemsHoldablesList: require('./itemsHoldablesList'),
     itemsTrinkets: require('./itemsTrinkets'),
+    itemsTrinketsList: require('./itemsTrinketsList'),
+    itemsWearables: require('./itemsWearables'),
+    itemsWearablesList: require('./itemsWearablesList'),
     itemsClothes: require('./itemsClothes'),
+    itemsClothesList: require('./itemsClothesList'),
     itemsEnergyShields: require('./itemsEnergyShields'),
+    itemsEnergyShieldsList: require('./itemsEnergyShieldsList'),
     parts: require('./parts'),
     clues: require('./clues'),
+    cluesList: require('./cluesList'),
     crises: require('./crises'),
+    crisesList: require('./crisesList'),
 }
 
 module.exports = routerList

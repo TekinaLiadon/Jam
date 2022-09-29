@@ -1,7 +1,7 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 function itemsTrinketsList(req, res) {
-    fetch(process.env.GAMESYSTEM_URL + '/items/trinkets', {
+    fetch(process.env.GAMESYSTEM_URL + '/items/trinkets/' + req.query.itemName, {
         method: 'GET',
     })
         .then((result) => {

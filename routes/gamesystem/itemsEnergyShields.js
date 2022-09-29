@@ -1,7 +1,7 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-function itemsEnergyShieldsList(req, res) {
-    fetch(process.env.GAMESYSTEM_URL + '/items/energy_shields/', {
+function itemsEnergyShields(req, res) {
+    fetch(process.env.GAMESYSTEM_URL + '/items/energy_shields/' + req.query.itemName, {
         method: 'GET',
     })
         .then((result) => {
@@ -13,4 +13,4 @@ function itemsEnergyShieldsList(req, res) {
         }))
 }
 
-module.exports = itemsEnergyShieldsList
+module.exports = itemsEnergyShields

@@ -1,7 +1,7 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-function cluesList(req, res) {
-    fetch(process.env.GAMESYSTEM_URL + '/clues/', {
+function clues(req, res) {
+    fetch(process.env.GAMESYSTEM_URL + '/clues/' + req.query.cluesId, {
         method: 'GET',
     })
         .then((result) => {
@@ -13,4 +13,4 @@ function cluesList(req, res) {
         }))
 }
 
-module.exports = cluesList
+module.exports = clues
