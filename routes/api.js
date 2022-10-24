@@ -13,6 +13,7 @@ router.post('/token/discord', authRoutes.tokenDiscord)
 router.post('/login', authRoutes.loginUser)
 router.post('/registration', authRoutes.registration)
 router.get('/info', authRoutes.giveInfo)
+router.post('/createCharacter', characterRoutes.createCharacter)
 
 router.get('/abilities', systemList.abilities)
 router.get('/abilitiesList', systemList.abilitiesList)
@@ -37,6 +38,7 @@ router.get('/crises', systemList.crises)
 router.get('/crisesList', systemList.crisesList)
 
 router.post('/getEntityAbilities', jsonRpcList.getEntityAbilities)
+router.post('/getCharacterInfo', jsonRpcList.getCharacterInfo)
 
 router.get('/code', function (req, res, next) {
     next(createError(401))
