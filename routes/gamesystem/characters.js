@@ -1,7 +1,7 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 function characters(req, res) {
-    fetch(process.env.GAMESYSTEM_URL + '/entity/' + req.query.charactersName, {
+    fetch(process.env.GAMESYSTEM_URL + '/entities/' + req.query.charactersName, {
         method: 'GET',
     })
         .then((result) => {

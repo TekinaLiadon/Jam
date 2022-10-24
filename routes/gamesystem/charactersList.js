@@ -6,7 +6,7 @@ function charactersList(req, res) {
     var characterCheck = `SELECT character_name FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
     Promise.all([
         jwtCheck(req.headers.authorization.split(' ')[1], true),
-        fetch(process.env.GAMESYSTEM_URL + '/players', {
+        fetch(process.env.GAMESYSTEM_URL + '/players?names_only=True', {
             method: 'GET',
         }),
     ])
@@ -17,7 +17,7 @@ function charactersList(req, res) {
             ])
         })
         .then((result) => {
-            console.log(result[1]) // доделать
+            // доделать
             if (!result[1][result[0][0].character_name]) return {message: 'Персонажей не существует'}
             else return result[1][result[0][0].character_name]
         })
