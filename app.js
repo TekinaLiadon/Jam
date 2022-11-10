@@ -53,10 +53,10 @@ const rfsStream = rfs.createStream(generator, {
     compress: 'gzip'
 })
 
-const corsOptions ={
-    origin:'http://localhost:8080',
-    credentials:true,
-    optionSuccessStatus:200
+const corsOptions = {
+    origin: 'http://localhost:8080',
+    credentials: true,
+    optionSuccessStatus: 200
 }
 
 app
@@ -67,7 +67,8 @@ app
     .use(express.static(path.join(__dirname, 'public')))
     .use(cors(corsOptions))
 
-if(process.env.NODE_ENV !== 'production') {
+
+if (process.env.NODE_ENV !== 'production') {
     app.use(logger('dev')) // console log
 }
 
@@ -78,7 +79,6 @@ app.use('/api', api)
 app.use(function (req, res, next) {
     next(createError(404));
 });
-
 
 
 app.use(function (err, req, res, next) {

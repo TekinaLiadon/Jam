@@ -8,12 +8,22 @@ const express = require('express'),
     jsonRpcList = require('./jsonRpcGameSystem/routerList'),
     battleInfo = require('./sse/battleInfo')
 
+const multer  = require('multer')
+
 router.get('/login/discord', authRoutes.loginDiscord)
 router.post('/token/discord', authRoutes.tokenDiscord)
 router.post('/login', authRoutes.loginUser)
 router.post('/registration', authRoutes.registration)
 router.get('/info', authRoutes.giveInfo)
 router.post('/createCharacter', characterRoutes.createCharacter)
+router.post('/loadSkin', multer({
+    limits: {
+        fieldSize: 548576,
+        fields: 5,
+        fileSize: 548576,
+        headerPairs: 5,
+    }
+}).single('skin'), characterRoutes.loadSkin)
 
 router.get('/abilities', systemList.abilities)
 router.get('/abilitiesList', systemList.abilitiesList)

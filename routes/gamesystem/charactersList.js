@@ -11,6 +11,7 @@ function charactersList(req, res) {
         }),
     ])
         .then((result) => {
+            console.log(result[1])
             return Promise.all([
                 pool(characterCheck, result[0].id),
                 result[1].json(),
