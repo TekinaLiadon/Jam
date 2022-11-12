@@ -28,7 +28,7 @@ app.all("/*", function (req, res, next) {
 app.use(history({
     rewrites: [
         {
-            from: /^\/api\/.*$/,
+            from: /^\/api\/.*$|^\/skins\/.*$/,
             to: function (context) {
                 return context.parsedUrl.pathname;
             }
@@ -65,6 +65,7 @@ app
     .use(express.urlencoded({extended: false}))
     .use(cookieParser())
     .use(express.static(path.join(__dirname, 'public')))
+    .use('skins', express.static(path.join(__dirname, 'public/skins')))
     .use(cors(corsOptions))
 
 
