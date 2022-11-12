@@ -16,7 +16,6 @@ function updateBlacklist(req, res)  {
                     pool(userInfo, [req.body.username])
                 ])
                     .then((result) => {
-                        console.log(result[1][0].id)
                         if (result[0][0]?.role) return req.body.command === 'ban' ?
                             pool(projectBan, [1, result[1][0].id]) :
                             pool(projectBan, [0, result[1][0].id])
