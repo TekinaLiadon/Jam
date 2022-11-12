@@ -13,10 +13,15 @@ function jwtCheck(token, noCheck) {
             token,
             process.env.TOKEN_KEY, function (err, decoded) {
                 if (!decoded) reject({message: 'Token not found'})
-                else if (noCheck) resolve(decoded)
+                else if (noCheck) {
+                    pool(accessTokenCheck, [decoded.access_token, decoded.id])
+                        .then((result) => {
+                            if (result[0].id === decoded.id || result[0].access_token === decoded.access_token) resolve(decoded)
+                            else reject({message: 'Access token invalid'})
+                        })
+                }
                 else {
                     tokenInfo = decoded
-                    console.log(tokenInfo)
                     Promise.all([
                         pool(blacklistCheck, [decoded.id]),
                         pool(accessTokenCheck, [decoded.access_token, decoded.id]),

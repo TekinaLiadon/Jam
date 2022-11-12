@@ -9,7 +9,6 @@ async function getTokenUser(req, res) {
     const updateInfo = `UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ?, refresh_token = ? WHERE username = ? `
     const sub_infoReg = `INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id) VALUES ( ?, ?, ?, ? )`
 
-    let id = 0
     let info = {}
 
     if (req.body.discordCode) {
@@ -56,11 +55,10 @@ async function getTokenUser(req, res) {
                 res.status(200).json({
                     username: info.username,
                     project: req.body.project,
-                    id: id,
                     role: 'user',
                     token: jwt.sign({
                         username: info.username,
-                        id: id,
+                        id: info.insertId,
                         access_token: info.access_token,
                     }, process.env.TOKEN_KEY),
                 })
