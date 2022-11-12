@@ -28,7 +28,8 @@ function jwtCheck(token, noCheck) {
                     ])
                         .then((result) => {
                             if (result[0][0]) reject({message: 'User is banned'})
-                            else if (!result[1][0]) reject({message: 'Access token invalid'})
+                            else if (result[1][0].id !== decoded.id || result[1][0].access_token !== decoded.access_token)
+                                reject({message: 'Access token invalid'})
                             return result[2]?.json()
                         })
                         .then((result) => {
