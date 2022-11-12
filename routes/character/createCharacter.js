@@ -9,7 +9,6 @@ function createCharacter(req, res) {
         jwtCheck(req.headers.authorization.split(' ')[1], true)
     ])
         .then((info) => {
-            console.log(info)
             return pool(character, [info[1].id, req.body.name, info[0]])
         })
         .then(() => res.status(200).json({

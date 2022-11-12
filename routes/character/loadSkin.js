@@ -5,24 +5,23 @@ var jwtCheck = require('../../validator/jwtCheck'),
     path = require('path')
 
 
-
 function loadSkin(req, res) {
     jwtCheck(req.headers.authorization.split(' ')[1], true)
         .then((result) => {
             const getCharacterName = `SELECT character_name FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
             return pool(getCharacterName, [result.id])
         })
-        .then((result) =>{
+        .then((result) => {
             if (!result.find((item) => item.character_name === req.body.name)?.character_name) res.status(500).json({
                 error: 'Персонаж не найден'
             })
-            else if (req.file.mimetype !== 'image/png') res.status(500).json({
+            else if (req.file?.mimetype !== 'image/png') res.status(500).json({
                 error: 'Неверный тип файла'
             })
             else {
                 let skinName
                 req.body.tag ? skinName = req.body.name + '-' + req.body.tag : skinName = req.body.name
-                fs.writeFile(path.resolve( `skins/${skinName}.png`), req.file.buffer, (err) => {
+                fs.writeFile(path.resolve(`public/skins/${skinName}.png`), req.file.buffer, (err) => {
                     if (err) res.status(500).json({
                         error: 'Ошибка записи'
                     })
@@ -35,9 +34,11 @@ function loadSkin(req, res) {
                 })
             }
         })
-        .catch((err) => res.status(500).json({
-                error: err
-            })
+        .catch((err) => {
+                res.status(500).json({
+                    error: err
+                })
+            }
         )
 }
 
