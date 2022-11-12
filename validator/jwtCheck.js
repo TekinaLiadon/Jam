@@ -16,7 +16,7 @@ function jwtCheck(token, noCheck) {
                 else if (noCheck) {
                     pool(accessTokenCheck, [decoded.access_token, decoded.id])
                         .then((result) => {
-                            if (result[0].id === decoded.id || result[0].access_token === decoded.access_token) resolve(decoded)
+                            if (result[0]?.id === decoded.id || result[0]?.access_token === decoded.access_token) resolve(decoded)
                             else reject({message: 'Access token invalid'})
                         })
                 }
