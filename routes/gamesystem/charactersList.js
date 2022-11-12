@@ -18,7 +18,12 @@ function charactersList(req, res) {
         })
         .then((result) => {
             if (!result[1][result[0][0].character_name]) return {message: 'Персонажей не существует'}
-            else return result[0].map((item) => result[1][item.character_name])
+            else return result[0].map((item) => {
+                return {
+                    name: item.character_name,
+                    display_name: result[1][item.character_name],
+                }
+            })
         })
         .then((result) => res.status(200).json(result))
         .catch((err) => res.status(500).json({
