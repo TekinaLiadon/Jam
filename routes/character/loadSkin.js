@@ -7,10 +7,6 @@ var jwtCheck = require('../../validator/jwtCheck'),
 
 
 function loadSkin(req, res) {
-    let info = {
-        validate: true,
-        tag: '',
-    }
     jwtCheck(req.headers.authorization.split(' ')[1], true)
         .then((result) => {
             const getCharacterName = `SELECT character_name FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
@@ -30,9 +26,12 @@ function loadSkin(req, res) {
                     if (err) res.status(500).json({
                         error: 'Ошибка записи'
                     })
-                    else res.status(200).json({
-                        messages: 'Скин успешно загружен'
-                    })
+                    else {
+                        req.file.buffer = null // Явная отчистка памяти
+                        res.status(200).json({
+                            messages: 'Скин успешно загружен'
+                        })
+                    }
                 })
             }
         })
