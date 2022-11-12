@@ -15,7 +15,8 @@ function jwtCheck(token, noCheck) {
                 if (!decoded) reject({message: 'Token not found'})
                 else if (noCheck) resolve(decoded)
                 else {
-                    token = decoded
+                    tokenInfo = decoded
+                    console.log(tokenInfo)
                     Promise.all([
                         pool(blacklistCheck, [decoded.id]),
                         pool(accessTokenCheck, [decoded.access_token, decoded.id]),
@@ -35,7 +36,7 @@ function jwtCheck(token, noCheck) {
                             const updateTokens = 'UPDATE ${process.env.CORE_TABLE_NAME} SET refresh_token = ?, access_token = ? WHERE id = ?'
                             const isServer = result?.filter((item) => item.id == process.env.ID_DISCORD_SERVER)[0]?.id
                             isServer ?
-                                pool(getRefreshToken, [decoded.id])
+                                pool(getRefreshToken, [tokenInfo.id])
                                     .then((result) => {
                                         if (result[0].refresh_token) {
                                             return fetch('https://discord.com/api/oauth2/token', {
@@ -57,7 +58,7 @@ function jwtCheck(token, noCheck) {
                                     })
                                     .then((result) => {
                                         tokenInfo.access_token = result.access_token
-                                        return pool(updateTokens, [result.refresh_token, result.access_token, decoded.id])
+                                        return pool(updateTokens, [result.refresh_token, result.access_token, tokenInfo.id])
                                     })
                                     .then(() => {
                                         resolve(tokenInfo)
