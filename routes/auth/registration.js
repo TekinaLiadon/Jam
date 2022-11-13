@@ -5,8 +5,8 @@ const express = require('express'),
 
 
 function registration(req, res) {
-    const registrationSQL = `INSERT INTO global (username,PASSWORD,role) VALUES ( ?, ?, ? )`
-    const sub_infoReg = `INSERT INTO sub_info (id, email, blacklist) VALUES ( ?, ?, ? )`
+    const registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username,PASSWORD,role) VALUES ( ?, ?, ? )`
+    const sub_infoReg = `INSERT INTO ${process.env.CORE_TABLE_NAME} (id, email, blacklist) VALUES ( ?, ?, ? )`
     let id = 0
 
     cipher(req.body.password)

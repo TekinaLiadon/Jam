@@ -2,7 +2,7 @@ const pool = require('../../database')
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 function giveGuilds (req, res) {
-    const getToken = 'SELECT access_token FROM global WHERE username = ? LIMIT 1'
+    const getToken = `SELECT access_token FROM ${process.env.CORE_TABLE_NAME} WHERE username = ? LIMIT 1`
 
     res.status(500).json({
         err: 'No'

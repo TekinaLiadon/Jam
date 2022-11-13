@@ -20,12 +20,12 @@ function writeServerSendEvent(res, sseId, data) {
     res.write('id: ' + sseId + '\n');
     res.write("data: new server event " + data + '\n\n');
 }
-// function countdown(res, count) {
-//     res.write("data: " + count + "\n\n")
-//     if (count)
-//         setTimeout(() => countdown(res, count-1), 1000)
-//     else
-//         res.end()
-// }
+function countdown(res, count) {
+    res.write("data: " + count + "\n\n")
+    if (count)
+        setTimeout(() => countdown(res, count-1), 1000)
+    else
+        res.end()
+}
 
 module.exports = connect
