@@ -3,7 +3,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
     jwtCheck = require('../../validator/jwtCheck')
 
 function charactersList(req, res) {
-    var characterCheck = `SELECT character_name FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
+    var characterCheck = `SELECT character_name, skin FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
     Promise.all([
         jwtCheck(req.headers.authorization.split(' ')[1], true),
         fetch(process.env.GAMESYSTEM_URL + '/players?names_only=True', {
@@ -22,6 +22,7 @@ function charactersList(req, res) {
                 return {
                     name: item.character_name,
                     display_name: result[1][item.character_name],
+                    skin: `https://tardigrade.ariadna.su/skins/${item.skin}`
                 }
             })
         })

@@ -4,7 +4,7 @@ var jwtCheck = require('../../validator/jwtCheck'),
     cipher = require('../../crypto/cipher')
 
 function createCharacter(req, res) {
-    var character = `INSERT INTO ${process.env.CHARACTER_TABLE_NAME} (id,character_name,password) VALUES ( ?, ?, ? )`
+    var character = `INSERT INTO ${process.env.CHARACTER_TABLE_NAME} (id,character_name,password,skin) VALUES ( ?, ?, ?, ? )`
     const timeStamp = new Date().getTime()
     var globalInfo = {}
     Promise.all([
@@ -34,7 +34,8 @@ function createCharacter(req, res) {
         })
         .then((info) => {
             if(info.error?.code) throw info.error
-            else return pool(character, [globalInfo[1].id, req.body.name, globalInfo[0]])
+            else return pool(character, [globalInfo[1].id, req.body.name, globalInfo[0],
+                `default.png`])
         })
         .then(() => res.status(200).json({
             status: 'success'
