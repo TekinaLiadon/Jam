@@ -1,6 +1,5 @@
 var jwtCheck = require('../../validator/jwtCheck'),
     pool = require('../../database'),
-    cipher = require('../../crypto/cipher'),
     fs = require("fs"),
     path = require('path')
 
@@ -25,11 +24,15 @@ function loadSkin(req, res) {
                     if (err) res.status(500).json({
                         error: 'Ошибка записи'
                     })
+                    req.file.buffer = null // Явная отчистка памяти
+                    if (req.body.tag) res.status(200).json({
+                        messages: 'Скин успешно загружен'
+                    })
                     else {
-                        req.file.buffer = null // Явная отчистка памяти
-                        res.status(200).json({
+                        const getCharacterName = `UPDATE ${process.env.CHARACTER_TABLE_NAME} SET skin = ? WHERE character_name = ? `
+                        return pool(getCharacterName, [`${skinName}.png`, req.body.name]).then(() => res.status(200).json({
                             messages: 'Скин успешно загружен'
-                        })
+                        }))
                     }
                 })
             }
