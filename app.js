@@ -60,7 +60,11 @@ const corsOptions = {
 }
 
 app
-    .use(logger('dev', {stream: rfsStream}))
+    .use(logger('combined', {
+        stream: rfsStream, skip: function (req, res) {
+            return res.statusCode < 400
+        }
+    }))
     .use(express.json())
     .use(express.urlencoded({extended: false}))
     .use(cookieParser())

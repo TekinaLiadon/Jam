@@ -24,7 +24,7 @@ function loadSkin(req, res) {
                     if (err) res.status(500).json({
                         error: 'Ошибка записи'
                     })
-                    req.file.buffer = null // Явная отчистка памяти
+                    req.file.buffer = '' // Явная отчистка памяти
                     if (req.body.tag) res.status(200).json({
                         messages: 'Скин успешно загружен'
                     })

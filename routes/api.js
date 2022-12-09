@@ -6,7 +6,9 @@ const express = require('express'),
     discordAPIRoutes = require('./discord/discordList'),
     systemList = require('./gamesystem/systemList'),
     jsonRpcList = require('./jsonRpcGameSystem/routerList'),
-    battleInfo = require('./sse/battleInfo')
+    sseList = require('./sse/routerList'),
+    battleInfo = require('./sse/battleInfo'),
+    test = require('./test/test')
 
 const multer  = require('multer')
 
@@ -70,5 +72,7 @@ router.get('/refreshToken', discordAPIRoutes.refreshToken)
 
 
 router.get('/events', battleInfo )
+router.get('/actualCharacterInfo', sseList.actualCharacterInfo )
+router.get('/test', test)
 
 module.exports = router;

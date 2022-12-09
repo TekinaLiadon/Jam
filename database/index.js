@@ -8,9 +8,12 @@ async function asyncFunction(sql, request) {
         database: process.env.DB_DATABASE,
     });
 
-    const res = await conn.query(sql, request);
-    await conn.end();
-    return res;
+    const res = await conn.query(sql, request)
+        .catch((err) => console.log(err)) // Сделать запись в файл
+        .finally(() => {
+            conn.end();
+        });
+    return res
 }
 
 module.exports = asyncFunction;
