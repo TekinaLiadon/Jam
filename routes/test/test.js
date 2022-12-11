@@ -1,8 +1,19 @@
 var fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+var cipher = require('../../crypto/cipher')
 
 function test (req, res){
-    const timeStamp = new Date().getTime()
-    fetch(process.env.GAMESYSTEM_URL + '/api', {
+    if (req.query.param === 'bcrypt') {
+        cipher('req.body.password')
+            .then((result) => {
+                return res.status(200).json({
+                    password: result,
+                })
+            })
+            .catch(() => res.status(500))
+    }
+    else res.status(200).json({a:'a'})
+
+    /*fetch(process.env.GAMESYSTEM_URL + '/api', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -19,7 +30,7 @@ function test (req, res){
         })
         .then((result) => {
             res.status(200).json(result)
-        })
+        })*/
 }
 
 module.exports = test
