@@ -19,6 +19,10 @@ export default {
                     token: {
                         type: 'string',
                     },
+                    status: {
+                        type: 'string',
+                        default: 'success'
+                    },
                 },
             },
             500: {
@@ -117,5 +121,33 @@ export default {
             },
             required: ['username', 'password', 'typeAuth'],
         }
-    }
+    },
+    loginDiscord: {
+        response: {
+            default: {
+                type: 'object',
+                properties: {
+                    message: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'error'
+                    }
+                }
+            },
+            200: {
+                type: 'object',
+                properties: {
+                    url: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'success'
+                    }
+                },
+            },
+        },
+    },
 }
