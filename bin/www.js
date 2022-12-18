@@ -1,4 +1,5 @@
 import Fastify from 'fastify'
+import multer from 'fastify-multer'
 import dotenv from 'dotenv'
 import router from '../router/index.js'
 import dbConnector from '../database/index.js'
@@ -39,7 +40,8 @@ await fastify.register(import('@fastify/rate-limit'), {
 })
 await fastify.register(import('@fastify/compress')) //nginx ?
 
-fastify.register(dbConnector, {
+
+await fastify.register(dbConnector, {
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PWD,
@@ -50,6 +52,7 @@ fastify.register(dbConnector, {
     saltWorkFactor: 7
 })
     .register(import('fastify-axios'))
+    .register(multer.contentParser)
     .register(router)
     .register(import('@fastify/static'), {
         root: path.join(__dirname, '..', 'public'),

@@ -1,4 +1,4 @@
-/*import schems from "../../schems/index.js";*/
+import schems from "../../schems/index.js";
 
 
 export default {
@@ -16,5 +16,5 @@ export default {
             })
         }
     },
-    /*schema: schems.login,*/
+    schema: schems.loginDiscord,
 }

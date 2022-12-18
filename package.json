@@ -19,6 +19,7 @@
     "fastify": "^4.10.2",
     "fastify-axios": "^1.2.6",
     "fastify-bcrypt": "^1.0.1",
+    "fastify-multer": "^2.0.3",
     "fastify-plugin": "^4.4.0",
     "mariadb": "^3.0.0",
     "pino-pretty": "^9.1.1",
