@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 
 export default {
+    method: 'POST',
+    url: '/api/createCharacter',
     async handler(req, reply) {
         await this.auth(req, reply)
         const connection = await this.mariadb.getConnection()

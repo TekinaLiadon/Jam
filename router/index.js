@@ -9,16 +9,16 @@ import characterInfo from "./Character/characterInfo.js";
 import actualCharacterInfo from "./sse/actualCharacterInfo.js";
 
 export default async function routes(fastify, options) {
+    fastify.route(login)
+    fastify.route(registration)
+    fastify.route(tokenDiscord)
+    fastify.route(loginDiscord)
+    fastify.route(loadSkin)
+    fastify.route(createCharacter)
+    fastify.route(charactersList)
+    fastify.route(characterInfo)
+    fastify.get('/api/actualCharacterInfo', actualCharacterInfo)
     fastify.get('/api/test', async (request, reply) => {
         return {hello: 'world'}
     })
-    fastify.post('/api/login', login)
-    fastify.post('/api/registration', registration)
-    fastify.post('/api/token/discord', tokenDiscord)
-    fastify.get('/api/login/discord', loginDiscord)
-    fastify.post('/api/loadSkin', loadSkin)
-    fastify.post('/api/createCharacter', createCharacter)
-    fastify.get('/api/charactersList', charactersList)
-    fastify.get('/api/characterInfo', characterInfo)
-    fastify.get('/api/actualCharacterInfo', actualCharacterInfo)
 }

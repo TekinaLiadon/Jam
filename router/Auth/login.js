@@ -1,6 +1,8 @@
 import schems from "../../schems/index.js";
 
 export default {
+    method: 'POST',
+    url: '/api/login',
     async handler(req, reply) {
         var userCheck = `SELECT username, password, id, role FROM ${process.env.CORE_TABLE_NAME} WHERE username=? LIMIT 1`
         var blacklistCheck = `SELECT blacklist FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE id=? AND blacklist=1 LIMIT 1`

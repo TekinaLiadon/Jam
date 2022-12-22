@@ -13,6 +13,8 @@ const upload = multer({
 })
 
 export default {
+    method: 'POST',
+    url: '/api/loadSkin',
     preHandler: upload.single('skin'),
     async handler(req, reply) {
         await this.auth(req, reply)

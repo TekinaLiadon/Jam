@@ -2,6 +2,8 @@ import schems from "../../schems/index.js";
 
 
 export default {
+    method: 'GET',
+    url: '/api/login/discord',
     async handler(req, reply) {
         if(req.query.redirect_url) {
             const redirect = await encodeURI(req.query.redirect_url)

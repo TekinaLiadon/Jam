@@ -1,6 +1,8 @@
 import schems from "../../schems/index.js";
 
 export default {
+    method: 'POST',
+    url: '/api/registration',
     async handler(req, reply) {
         let id = 0
         const connection = await this.mariadb.getConnection()

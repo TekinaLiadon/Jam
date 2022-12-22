@@ -1,13 +1,15 @@
-/*import schems from "../../schems/index.js";*/
+
 
 
 export default {
+    method: 'GET',
+    url: '/api/charactersList',
     async handler(req, reply) {
         await this.auth(req, reply)
         const connection = await this.mariadb.getConnection()
         var characterCheck = `SELECT character_name, skin, uuid FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
         return Promise.all([
-            this.axios.get(process.env.GAMESYSTEM_URL + '/character/players'),
+            this.axios.get(process.env.GAMESYSTEM_URL + '/characters?name_only=true'),
             connection
                 .query(characterCheck, req.user.id)
         ])
@@ -19,7 +21,7 @@ export default {
                         return {
                             name: item.name,
                             display_name: item.display_name,
-                            skin: `https://tardigrade.ariadna.su/skins/${item.skin}`
+                            skin: `https://tardigrade.ariadna.su/skins/${result[1].find((el) => el.uuid === item.uuid).skin}`
                         }
                     })
                     reply.send(info)

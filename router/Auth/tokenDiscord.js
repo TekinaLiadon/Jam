@@ -2,6 +2,8 @@
 
 
 export default {
+    method: 'POST',
+    url: '/api/token/discord',
     async handler(req, reply) {
         var registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
         var checkUser = `SELECT username, id FROM ${process.env.CORE_TABLE_NAME} WHERE username = ?`
