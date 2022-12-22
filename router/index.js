@@ -6,6 +6,7 @@ import loadSkin from "./Character/loadSkin.js";
 import createCharacter from "./Character/createCharacter.js";
 import charactersList from "./Character/charactersList.js";
 import characterInfo from "./Character/characterInfo.js";
+import actualCharacterInfo from "./sse/actualCharacterInfo.js";
 
 export default async function routes(fastify, options) {
     fastify.get('/api/test', async (request, reply) => {
@@ -19,4 +20,5 @@ export default async function routes(fastify, options) {
     fastify.post('/api/createCharacter', createCharacter)
     fastify.get('/api/charactersList', charactersList)
     fastify.get('/api/characterInfo', characterInfo)
+    fastify.get('/api/actualCharacterInfo', actualCharacterInfo)
 }
