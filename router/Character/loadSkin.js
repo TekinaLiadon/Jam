@@ -18,7 +18,6 @@ export default {
     preHandler: upload.single('skin'),
     async handler(req, reply) {
         await this.auth(req, reply)
-        console.log(req.user)
         const connection = await this.mariadb.getConnection()
         const getCharacterName = `SELECT character_name FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
         return await connection
