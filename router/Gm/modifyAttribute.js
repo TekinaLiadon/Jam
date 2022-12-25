@@ -2,7 +2,7 @@ import roleList from "../../enums/roleList.js";
 
 export default {
     method: 'POST',
-    url: '/api/addAbility',
+    url: '/api/modifyAttribute',
     preValidation: function (req, reply, done) {
         this.auth(req, reply)
         done()
@@ -10,10 +10,12 @@ export default {
     async handler(req, reply) {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()
-        return Promise.all([await this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+        return await Promise.all([
+            this.axios.post(process.env.GAMESYSTEM_URL + '/entities/mod_attribute',
             JSON.stringify({
                 entity: req.body.entityName,
-                ability: req.body.abilityName,
+                modified_object: req.body.attributeName,
+                mod: req.body.mod
             }), {
                 headers: {'Content-Type': 'application/json'},
             }
@@ -26,6 +28,5 @@ export default {
             })
             .catch((err) => reply.code(500).send(err.response.data))
             .finally(() => connection.release())
-
     }
 }

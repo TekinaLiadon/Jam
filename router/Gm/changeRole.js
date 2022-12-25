@@ -3,8 +3,11 @@ import roleList from "../../enums/roleList.js";
 export default {
     method: 'POST',
     url: '/api/changeRole',
+    preValidation: function (req, reply, done) {
+        this.auth(req, reply)
+        done()
+    },
     async handler(req, reply) {
-        await this.auth(req, reply)
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? AND role = 'admin' LIMIT 1`
         var selectCharacterName = `SELECT id FROM ${process.env.CHARACTER_TABLE_NAME} WHERE character_name = ? LIMIT 1`
         var roleUpdate = `UPDATE ${process.env.CORE_TABLE_NAME} SET role = ? WHERE id = ?`
@@ -16,19 +19,13 @@ export default {
             .then((result) => {
                 if (result[0][0] && result[1][0]?.id && req.body.role === roleList[req.body.role]?.name)
                     return connection.query(roleUpdate, [req.body.role, result[1][0].id])
-                else throw new Error()
+                else return reply.code(403).send({text: 'Недостаточно прав'})
             })
-            .then(() => {
-                connection.release()
-                reply.send({
+            .then(() => reply.send({
                     characterName: req.body.characterName,
                     role: req.body.role,
-                })
-            })
-            .catch(() => {
-                connection.release()
-                reply.code(500).send({text: 'Непредвиденная ошибка'})
-            })
-
+                }))
+            .catch(() => reply.code(500).send({text: 'Непредвиденная ошибка'}))
+            .finally(() => connection.release())
     }
 }

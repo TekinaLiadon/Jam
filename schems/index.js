@@ -61,67 +61,67 @@ export default {
         }
     },
     login: {
-        response: {
-            default: {
-                type: 'object',
+    response: {
+    default: {
+            type: 'object',
                 properties: {
-                    message: {
-                        type: 'string',
-                    },
-                    status: {
-                        type: 'string',
-                        default: 'error'
-                    }
-                }
-            },
-            200: {
-                type: 'object',
-                properties: {
-                    token: {
-                        type: 'string',
-                    },
-                    status: {
-                        type: 'string',
-                        default: 'success'
-                    }
+                message: {
+                    type: 'string',
                 },
-            },
-            401: {
-                type: 'object',
+                status: {
+                    type: 'string',
+                default: 'error'
+                }
+            }
+        },
+        200: {
+            type: 'object',
                 properties: {
-                    text: {
-                        type: 'string',
-                    },
-                    code: {
-                        type: 'string',
-                    },
-                    status: {
-                        type: 'string',
-                        default: 'error'
-                    }
+                token: {
+                    type: 'string',
+                },
+                status: {
+                    type: 'string',
+                default: 'success'
                 }
             },
         },
-        body: {
+        401: {
             type: 'object',
-            properties: {
-                username: {
+                properties: {
+                text: {
                     type: 'string',
+                },
+                code: {
+                    type: 'string',
+                },
+                status: {
+                    type: 'string',
+                default: 'error'
+                }
+            }
+        },
+    },
+    body: {
+        type: 'object',
+            properties: {
+            username: {
+                type: 'string',
                     minLength: 3,
                     maxLength: 20,
-                },
-                password: {
-                    type: 'string',
+            },
+            password: {
+                type: 'string',
                     minLength: 5,
                     maxLength: 64,
-                },
-                typeAuth: {
-                    type: 'string',
-                }
             },
-            required: ['username', 'password', 'typeAuth'],
-        }
-    },
+            typeAuth: {
+                type: 'string',
+            }
+        },
+        required: ['username', 'password', 'typeAuth'],
+    }
+},
     loginDiscord: {
         response: {
             default: {
