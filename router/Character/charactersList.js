@@ -4,8 +4,11 @@
 export default {
     method: 'GET',
     url: '/api/charactersList',
+    preValidation: function (req, reply, done) {
+        this.auth(req, reply)
+        done()
+    },
     async handler(req, reply) {
-        await this.auth(req, reply)
         const connection = await this.mariadb.getConnection()
         var characterCheck = `SELECT character_name, skin, uuid FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
         return Promise.all([
@@ -28,6 +31,39 @@ export default {
                 }
             })
             .catch((err) => reply.code(500).send(err))
+            .finally(() => connection.release())
     },
-    /*schema: schems.loginDiscord,*/
+    schema: {
+        response: {
+            default: {
+                type: 'object',
+                properties: {
+                    message: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'error'
+                    }
+                }
+            },
+            200: {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        name: {
+                            type: 'string',
+                        },
+                        display_name: {
+                            type: 'string',
+                        },
+                        skin: {
+                            type: 'string',
+                        },
+                    },
+                }
+            },
+        },
+    },
 }

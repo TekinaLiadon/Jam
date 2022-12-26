@@ -35,7 +35,7 @@ await fastify.register(import('@fastify/cors'), {
 })
 await fastify.register(import('@fastify/helmet'))
 await fastify.register(import('@fastify/rate-limit'), {
-    max: 100,
+    max: 150,
     timeWindow: '1 minute'
 })
 await fastify.register(import('@fastify/compress')) //nginx ?
