@@ -19,13 +19,13 @@ export default {
             .then((result) => {
                 if (result[0][0] && result[1][0]?.id && req.body.role === roleList[req.body.role]?.name)
                     return connection.query(roleUpdate, [req.body.role, result[1][0].id])
-                else return reply.code(403).send({text: 'Недостаточно прав'})
+                else return reply.code(403).send({message: 'Недостаточно прав'})
             })
             .then(() => reply.send({
                     characterName: req.body.characterName,
                     role: req.body.role,
                 }))
-            .catch(() => reply.code(500).send({text: 'Непредвиденная ошибка'}))
+            .catch(() => reply.code(500).send({message: 'Непредвиденная ошибка'}))
             .finally(() => connection.release())
     }
 }

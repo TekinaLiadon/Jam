@@ -1,6 +1,3 @@
-import schems from "../../schems/index.js";
-
-
 export default {
     method: 'GET',
     url: '/api/login/discord',
@@ -18,5 +15,32 @@ export default {
             })
         }
     },
-    schema: schems.loginDiscord,
+    schema: {
+        response: {
+            default: {
+                type: 'object',
+                properties: {
+                    message: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'error'
+                    }
+                }
+            },
+            200: {
+                type: 'object',
+                properties: {
+                    url: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'success'
+                    }
+                },
+            },
+        },
+    },
 }

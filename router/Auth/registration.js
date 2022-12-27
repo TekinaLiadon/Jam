@@ -1,5 +1,3 @@
-import schems from "../../schems/index.js";
-
 export default {
     method: 'POST',
     url: '/api/registration',
@@ -14,20 +12,75 @@ export default {
                 id = parseInt(result.insertId, 10)
                 return connection.query(`INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email ,blacklist) VALUES ( ?, ?, ? )`, [parseInt(result.insertId, 10), req.body.email || null, 0,])
             })
-            .then(() => {
-                connection.release()
-                reply.send({
+            .then(() => reply.send({
                     token: this.jwt.sign({
                         username: req.body.username,
                         id: id,
                         role: 'user'
                     }),
-                })
-            })
-            .catch(err => {
-                connection.release()
-                err?.type === "SqlError" ? reply.code(500).send(err) : reply.send(err) // code "ER_DUP_ENTRY" экранировать
-            })
+                }))
+            .catch(err => err?.type === "SqlError" ? reply.code(500).send(err) : reply.send(err)) // code "ER_DUP_ENTRY" экранировать)
+            .finally(() => connection.release())
     },
-    schema: schems.registration,
+    schema: {
+        response: {
+            default: {
+                type: 'object',
+                properties: {
+                    message: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'error'
+                    }
+                }
+            },
+            200: {
+                type: 'object',
+                properties: {
+                    token: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'success'
+                    },
+                },
+            },
+            500: {
+                type: 'object',
+                properties: {
+                    text: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'error'
+                    }
+                }
+            },
+        },
+        body: {
+            type: 'object',
+            properties: {
+                username: {
+                    type: 'string',
+                    minLength: 3,
+                    maxLength: 20,
+                },
+                password: {
+                    type: 'string',
+                    minLength: 5,
+                    maxLength: 64,
+                },
+                email: {
+                    type: 'string',
+                    minLength: 5,
+                    maxLength: 20,
+                },
+            },
+            required: ['username', 'password', 'email'],
+        }
+    },
 }
