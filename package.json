@@ -5,6 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "node ./bin/www",
+    "pm2_start": "pm2 start ./bin/www.js --name=Jam --max-memory-restart 999M --watch",
+    "pm2_info": "pm2 ls",
+    "pm2_restart": "pm2 restart ./bin/www.js --name=Jam",
+    "pm2_stop": "pm2 stop Jam --watch",
+    "pm2_delete": "pm2 delete Jam",
+    "pm2_monit": "pm2 monit",
     "serve": "nodemon ./bin/www",
     "init-project": "node initialization.js"
   },
@@ -23,6 +29,7 @@
     "fastify-plugin": "^4.4.0",
     "mariadb": "^3.0.0",
     "pino-pretty": "^9.1.1",
+    "pm2": "^5.2.2",
     "redis": "^4.2.0",
     "rotating-file-stream": "^3.0.4",
     "sqlstring": "^2.3.3",
