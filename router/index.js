@@ -12,6 +12,7 @@ import addAbility from "./Gm/addAbility.js";
 import abilitiesList from "./Gm/abilitiesList.js";
 import modifyAttribute from "./Gm/modifyAttribute.js";
 import modifySkill from "./Gm/modifySkill.js";
+import blacklist from "./Gm/blacklist.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -27,6 +28,7 @@ export default async function routes(fastify, options) {
     fastify.route(abilitiesList)
     fastify.route(modifyAttribute)
     fastify.route(modifySkill)
+    fastify.route(blacklist)
     fastify.get('/api/actualCharacterInfo', actualCharacterInfo)
     fastify.get('/api/test', async (request, reply) => {
         return {hello: 'world'}
