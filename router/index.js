@@ -13,6 +13,11 @@ import abilitiesList from "./Gm/abilitiesList.js";
 import modifyAttribute from "./Gm/modifyAttribute.js";
 import modifySkill from "./Gm/modifySkill.js";
 import blacklist from "./Gm/blacklist.js";
+import removeAbility from  './Gm/removeAbility.js'
+import modifyStat from "./Gm/modifyStat.js";
+import modifyMaxStat from "./Gm/modifyMaxStat.js";
+import addNarrativePerk from "./Gm/addNarrativePerk.js";
+import removeNarrativePerk from "./Gm/removeNarrativePerk.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -29,6 +34,11 @@ export default async function routes(fastify, options) {
     fastify.route(modifyAttribute)
     fastify.route(modifySkill)
     fastify.route(blacklist)
+    fastify.route(removeAbility)
+    fastify.route(modifyStat)
+    fastify.route(modifyMaxStat)
+    fastify.route(addNarrativePerk)
+    fastify.route(removeNarrativePerk)
     fastify.get('/api/actualCharacterInfo', actualCharacterInfo)
     fastify.get('/api/test', async (request, reply) => {
         return {hello: 'world'}
