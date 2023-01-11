@@ -33,7 +33,9 @@
     "redis": "^4.2.0",
     "rotating-file-stream": "^3.0.4",
     "sqlstring": "^2.3.3",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "it-pushable": "^1.4.2",
+    "it-to-stream": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.16"

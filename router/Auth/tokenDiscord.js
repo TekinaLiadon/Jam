@@ -26,16 +26,24 @@ export default {
         })
             .then(json => {
                 info = json.data
-                return this.axios.get('https://discord.com/api/users/@me', {
+                return  Promise.all([this.axios.get('https://discord.com/api/users/@me', {
                     headers: {
                         authorization: `Bearer ${json.data.access_token}`
                     }
-                })
+                }) ,
+                    this.axios.get('https://discord.com/api/users/@me/guilds', {
+                        headers: {
+                            authorization: `Bearer ${json.data.access_token}`,
+                        },
+                    })
+                ])
             })
             .then((result) => {
-                info = Object.assign(info, result.data)
-                return connection
-                    .query(checkUser, [result.data.username + result.data.discriminator])
+                info = Object.assign(info, result[0].data)
+                const isServer = result[1].data.filter((item) => item.id == 875073482373869578)[0]?.id
+                if (isServer) return connection
+                    .query(checkUser, [result[0].data.username + result[0].data.discriminator])
+                else throw {code: 'Not on the discord server'}
             })
             .then((result) => {
                 info.insertId = result[0]?.id
@@ -102,8 +110,6 @@ export default {
             properties: {
                 discordCode: {
                     type: 'string',
-                    minLength: 3,
-                    maxLength: 20,
                 },
             },
             required: ['discordCode'],

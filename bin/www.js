@@ -3,6 +3,7 @@ import multer from 'fastify-multer'
 import dotenv from 'dotenv'
 import router from '../router/index.js'
 import dbConnector from '../database/index.js'
+import sse from '../plugins/sse/index.js'
 import path from 'path'
 import {fileURLToPath} from 'url';
 
@@ -26,6 +27,7 @@ const envToLogger = {
     },
 }
 const fastify = Fastify({
+    /*http2: true,*/
     logger: envToLogger[process.env.NODE_ENV] ?? true,
 })
 await fastify.register(import('@fastify/cors'), {
@@ -53,6 +55,7 @@ await fastify.register(dbConnector, {
 })
     .register(import('fastify-axios'))
     .register(multer.contentParser)
+    .register(sse)
     .register(router)
     .register(import('@fastify/static'), {
         root: path.join(__dirname, '..', 'public'),

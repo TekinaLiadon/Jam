@@ -6,7 +6,7 @@ import loadSkin from "./Character/loadSkin.js";
 import createCharacter from "./Character/createCharacter.js";
 import charactersList from "./Character/charactersList.js";
 import characterInfo from "./Character/characterInfo.js";
-import actualCharacterInfo from "./sse/actualCharacterInfo.js";
+import actualCharacterInfo from "./Sse/actualCharacterInfo.js";
 import changeRole from "./Gm/changeRole.js";
 import addAbility from "./Gm/addAbility.js";
 import abilitiesList from "./Gm/abilitiesList.js";
@@ -39,8 +39,11 @@ export default async function routes(fastify, options) {
     fastify.route(modifyMaxStat)
     fastify.route(addNarrativePerk)
     fastify.route(removeNarrativePerk)
-    fastify.get('/api/actualCharacterInfo', actualCharacterInfo)
+    fastify.route(actualCharacterInfo)
     fastify.get('/api/test', async (request, reply) => {
-        return {hello: 'world'}
+        for (let i = 0; i < 10; i++) {
+            reply.sse({id: String(i), data: "Some message"});
+        }
+        reply.sse({event: 'end'});
     })
 }

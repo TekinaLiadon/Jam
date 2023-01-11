@@ -9,6 +9,7 @@ export default {
     },
     async handler(req, reply) {
         var projectBan = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET blacklist = ? WHERE id = ?`
+        var charactersBan = `UPDATE ${process.env.CHARACTER_TABLE_NAME} SET blacklist = ? WHERE id = ?`
         var userInfo = `SELECT id, role FROM ${process.env.CORE_TABLE_NAME} WHERE username = ? LIMIT 1`
         var roleCheck = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()
@@ -22,7 +23,10 @@ export default {
                     codeErr: 403,
                 }
                 else if (roleList[result[1][0].role]?.level >= 5) return req.body.command === 'ban' ?
-                    connection.query(projectBan, [1, result[0][0].id]) :
+                    Promise.all([
+                        connection.query(projectBan, [1, result[0][0].id]),
+                        connection.query(charactersBan, [1, result[0][0].id]),
+                    ]) :
                     connection.query(projectBan, [0, result[0][0].id])
                 else throw {
                         message: 'Недостаточно прав',
