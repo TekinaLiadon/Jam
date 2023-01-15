@@ -25,7 +25,10 @@ export default {
                 if (roleList[result[1][0].role]?.level >= 5) return reply.send({message: result[0].data.message})
                 else return reply.code(403).send({message: 'Недостаточно прав'})
             })
-            .catch((err) => reply.code(500).send(err.response.data))
+            .catch((err) => {
+                console.log(err)
+                reply.code(500).send(err.response.data)
+            })
             .finally(() => connection.release())
     },
     schema: {
