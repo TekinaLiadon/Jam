@@ -47,7 +47,6 @@ export default {
             })
             .then((result) => {
                 info.insertId = result[0]?.id
-                console.log(info.insertId, result[0])
                 if (result[0]?.username) return connection
                     .query(updateInfo, [info.access_token, info.refresh_token, info.username + info.discriminator])
                 else return connection

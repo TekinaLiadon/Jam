@@ -26,7 +26,6 @@ export default {
                 else return reply.code(403).send({message: 'Недостаточно прав'})
             })
             .catch((err) => {
-                console.log(req.user)
                 reply.code(500).send(err.response.data)
             })
             .finally(() => connection.release())
