@@ -22,7 +22,7 @@ const envToLogger = {
         },
     },
     production: {
-        level: 'warn',
+        level: 'info',
         /*file: '/path/to/file'*/
     },
 }
