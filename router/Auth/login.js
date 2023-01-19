@@ -52,7 +52,6 @@ export default {
                             })
                             .catch(() => reply.code(500))
                         else reply.code(401).send({message: 'Пользователя нет на сервере'})
-
                     }
                 })
                 .then(() => reply.send({

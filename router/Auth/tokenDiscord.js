@@ -26,11 +26,12 @@ export default {
         })
             .then(json => {
                 info = json.data
-                return  Promise.all([this.axios.get('https://discord.com/api/users/@me', {
+                return  Promise.all([
+                    this.axios.get('https://discord.com/api/users/@me', {
                     headers: {
                         authorization: `Bearer ${json.data.access_token}`
                     }
-                }) ,
+                }),
                     this.axios.get('https://discord.com/api/users/@me/guilds', {
                         headers: {
                             authorization: `Bearer ${json.data.access_token}`,
