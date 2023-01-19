@@ -15,7 +15,7 @@ export default {
             client_secret: process.env.DISCORD_SECRET,
             code: req.body.discordCode,
             grant_type: 'authorization_code',
-            redirect_uri: process.env.WEBSITE_URL,
+            redirect_uri: 'http://localhost:8080/' || process.env.WEBSITE_URL, // TODO Убрать когда будет релиз
             scope: 'identify',
         })
         const connection = await this.mariadb.getConnection()
