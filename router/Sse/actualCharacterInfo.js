@@ -11,7 +11,6 @@ export default {
         var indexPlayer = playerList.findIndex((item) => {
             return item?.token === req.query.token
         })
-         console.log(req.query)
         const playerInfo = {
             token: req.query.token,
             id: new Date().getTime(),
@@ -23,10 +22,10 @@ export default {
         }
         getCharacterInfo(playerInfo)
 
-        if (playerList.length === 1) {
-            clearInterval(timerId)
-            timerId = setInterval(updatePlayerInfo, sendInterval); // Заменить на неблокирующий
-        }
+
+        clearInterval(timerId)
+        timerId = setInterval(updatePlayerInfo, sendInterval); // Заменить на неблокирующий
+
 
         function getCharacterInfo(info) {
             return axios.get(process.env.GAMESYSTEM_URL + `/entities/${info.req.query.characterName}`)
