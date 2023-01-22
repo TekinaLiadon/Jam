@@ -5,6 +5,7 @@ export default {
         var userCheck = `SELECT username, password, id, role FROM ${process.env.CORE_TABLE_NAME} WHERE username=? LIMIT 1`
         var blacklistCheck = `SELECT blacklist FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE id=? AND blacklist=1 LIMIT 1`
         var accessTokenCheck = `SELECT access_token FROM ${process.env.CORE_TABLE_NAME} WHERE access_token=? AND id=? LIMIT 1`
+        var updateGuilds = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET group_json = ? WHERE id = ? `
         var info = {}
 
         if (req.body.typeAuth === 'discord') {
@@ -26,44 +27,55 @@ export default {
                     if (result[0][0]) reply.code(401).send({message: 'Пользователь забанен'})
                     else if (!result[1][0]) reply.code(401).send({message: 'Токен невалиден'})
                     else {
-                        const getRefreshToken = `SELECT refresh_token FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
-                        const updateTokens = `UPDATE ${process.env.CORE_TABLE_NAME} SET refresh_token = ?, access_token = ? WHERE id = ?`
-                        const isServer = result?.filter((item) => item.id == 875073482373869578)[0]?.id
-                        if (isServer) return connection
-                            .query(getRefreshToken, [req.user.id])
-                            .then((result) => {
-                                if (result[0].refresh_token) {
-                                    return this.axios.post('https://discord.com/api/oauth2/token', querystring.stringify({
-                                        client_id: process.env.DISCORD_ID,
-                                        client_secret: process.env.DISCORD_SECRET,
-                                        grant_type: 'refresh_token',
-                                        refresh_token: result[0].refresh_token,
-                                    }), {
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded',
-                                        },
-                                    })
-                                } else reply.code(401).send({message: 'Рефреш токен невалиден'})
-                            })
-                            .then((result) => {
-                                info = result.data
-                                connection
-                                    .query(updateTokens, [info.refresh_token, info.access_token, req.user.id])
-                            })
-                            .catch(() => reply.code(500))
+                        const isServer = result[2].data.filter((item) => item.id == 875073482373869578)[0]?.id
+                        if (isServer) {
+                            info.jsonGuild = [2].data
+                            return connection.beginTransaction()
+                        }
                         else reply.code(401).send({message: 'Пользователя нет на сервере'})
                     }
                 })
-                .then(() => reply.send({
+                .then(() => {
+                    const getRefreshToken = `SELECT refresh_token FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
+                    return connection
+                        .query(getRefreshToken, [req.user.id])
+                })
+                .then((result) => {
+                    if (result[0].refresh_token) {
+                        return this.axios.post('https://discord.com/api/oauth2/token', querystring.stringify({
+                            client_id: process.env.DISCORD_ID,
+                            client_secret: process.env.DISCORD_SECRET,
+                            grant_type: 'refresh_token',
+                            refresh_token: result[0].refresh_token,
+                        }), {
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                        })
+                    } else reply.code(401).send({message: 'Рефреш токен невалиден'})
+                })
+                .then((result) => {
+                    const updateTokens = `UPDATE ${process.env.CORE_TABLE_NAME} SET refresh_token = ?, access_token = ? WHERE id = ?`
+                    info = result.data
+                    return Promise.all([
+                        connection
+                        .query(updateTokens, [info.refresh_token, info.access_token, req.user.id]),
+                        connection
+                            .query(updateGuilds, [info.jsonGuild])
+                        ])
+                })
+                .then(() => {
+                    connection.commit()
+                    reply.send({
                         token: this.jwt.sign({
                             username: req.user.username,
                             id: req.user.id,
                             access_token: info.access_token,
                             role: req.user.role,
                         })
-                    }))
+                    })})
                 .catch((err) => reply.code(401).send({
-                        message: 'Неверное имя пользователя/пароль',
+                        message: 'Что-то пошло не так',
                         code: err.code
                     }))
                 .finally(() => connection.release())

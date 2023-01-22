@@ -9,9 +9,9 @@ export default {
         const connection = await this.mariadb.getConnection()
         var characterCheck = `SELECT character_name, skin, uuid FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
         return Promise.all([
-            this.axios.get(process.env.GAMESYSTEM_URL + '/characters?name_only=true'),
+            this.axios.get(process.env.GAMESYSTEM_URL + '/characters'),
             connection
-                .query(characterCheck, req.user.id)
+                .query(characterCheck, req.user?.id)
         ])
             .then((result) => {
                 const characterList = result[0].data.filter((el) => result[1].some((item) => item.uuid === el.uuid))

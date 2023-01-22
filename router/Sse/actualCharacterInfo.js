@@ -6,19 +6,15 @@ var timerId;
 export default {
     method: 'GET',
     url: '/api/actualCharacterInfo',
-    preValidation: function (req, reply, done) {
-        this.auth(req, reply)
-        done()
-    },
     handler(req, reply) {
         var axios = this.axios
         var indexPlayer = playerList.findIndex((item) => {
-            return item?.token === req.headers.authorization.split(' ')[1]
+            return item?.token === req.query.token
         })
 
         if (indexPlayer === -1) {
             const playerInfo = {
-                token: req.headers.authorization.split(' ')[1],
+                token: req.query.token,
                 id: new Date().getTime(),
                 req,
                 reply,
@@ -60,7 +56,7 @@ export default {
 
         req.socket.on('close', () => {
             playerList.splice(playerList.findIndex((item) => {
-                return item?.token === req.headers.authorization.split(' ')[1]
+                return item?.token === req.query.token
             }), 1)
             reply.sse({event: 'end'});
         });
