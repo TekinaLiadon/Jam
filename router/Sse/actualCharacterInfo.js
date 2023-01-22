@@ -11,14 +11,15 @@ export default {
         var indexPlayer = playerList.findIndex((item) => {
             return item?.token === req.query.token
         })
-        if (indexPlayer === -1) {
-            playerList.push(playerInfo)
-        }
+         console.log(req.query)
         const playerInfo = {
             token: req.query.token,
             id: new Date().getTime(),
             req,
             reply,
+        }
+        if (indexPlayer === -1) {
+            playerList.push(playerInfo)
         }
         getCharacterInfo(playerInfo)
 
