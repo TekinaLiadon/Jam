@@ -54,7 +54,7 @@ export default {
                 else reply.code(401).send({message: 'Данная сущность не найдена на дискорд сервере'})
             })
             .then((result) => {
-                if (result[2]) reply.code(401).send({message: 'Пользователь забанен'})
+                if (result[2].length > 0) reply.code(401).send({message: 'Пользователь забанен'})
                 info.insertId = result[0][0]?.id
                 info.guildJson = result[1]
                 return connection.beginTransaction()

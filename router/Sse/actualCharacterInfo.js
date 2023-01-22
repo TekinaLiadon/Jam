@@ -11,17 +11,16 @@ export default {
         var indexPlayer = playerList.findIndex((item) => {
             return item?.token === req.query.token
         })
-
         if (indexPlayer === -1) {
-            const playerInfo = {
-                token: req.query.token,
-                id: new Date().getTime(),
-                req,
-                reply,
-            }
             playerList.push(playerInfo)
-            getCharacterInfo(playerInfo)
         }
+        const playerInfo = {
+            token: req.query.token,
+            id: new Date().getTime(),
+            req,
+            reply,
+        }
+        getCharacterInfo(playerInfo)
 
         if (playerList.length === 1) {
             clearInterval(timerId)

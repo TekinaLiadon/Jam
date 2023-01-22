@@ -35,7 +35,10 @@ await fastify.register(import('@fastify/cors'), {
     credentials: true,
     optionSuccessStatus: 200
 })
-await fastify.register(import('@fastify/helmet'))
+await fastify.register(import('@fastify/helmet'), {
+        crossOriginResourcePolicy: false,
+    }
+)
 await fastify.register(import('@fastify/rate-limit'), {
     max: 150,
     timeWindow: '1 minute'
@@ -51,8 +54,8 @@ await fastify.register(dbConnector, {
 })
     .register(import('../utils/jwtLogic.js'))
     .register(import('fastify-bcrypt'), {
-    saltWorkFactor: 7
-})
+        saltWorkFactor: 7
+    })
     .register(import('fastify-axios'))
     .register(multer.contentParser)
     .register(sse)
@@ -61,18 +64,18 @@ await fastify.register(dbConnector, {
         root: path.join(__dirname, '..', 'public'),
     })
     .setNotFoundHandler((req, res) => {
-    if (req.raw.url && req.raw.url.startsWith("/api")) {
-        return res.status(404).send({
-            success: false,
-            error: {
-                kind: "user_input",
-                message: "Not Found",
-            },
-        });
+        if (req.raw.url && req.raw.url.startsWith("/api")) {
+            return res.status(404).send({
+                success: false,
+                error: {
+                    kind: "user_input",
+                    message: "Not Found",
+                },
+            });
 
-    }
-    res.status(200).sendFile("index.html");
-})
+        }
+        res.status(200).sendFile("index.html");
+    })
 
 function normalizePort(val) {
     let port = parseInt(val, 10);
