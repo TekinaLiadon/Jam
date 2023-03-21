@@ -1,4 +1,4 @@
-# Stargazer backend
+# Jam backend
 
 Для старта проекта необходимо
 
