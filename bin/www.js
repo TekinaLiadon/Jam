@@ -56,6 +56,11 @@ await fastify.register(dbConnector, {
     .register(import('fastify-bcrypt'), {
         saltWorkFactor: 7
     })
+    .register(import('@fastify/websocket'), {
+        options: {
+            maxPayload: 1048576,
+        }
+    })
     .register(import('fastify-axios'))
     .register(multer.contentParser)
     .register(sse)

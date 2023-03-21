@@ -18,9 +18,11 @@ import modifyStat from "./Gm/modifyStat.js";
 import modifyMaxStat from "./Gm/modifyMaxStat.js";
 import addNarrativePerk from "./Gm/addNarrativePerk.js";
 import removeNarrativePerk from "./Gm/removeNarrativePerk.js";
+import combat from "./Ws/combat.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
+    /*fastify.route(combat)*/
     fastify.route(registration)
     fastify.route(tokenDiscord)
     fastify.route(loginDiscord)
@@ -40,6 +42,9 @@ export default async function routes(fastify, options) {
     fastify.route(addNarrativePerk)
     fastify.route(removeNarrativePerk)
     fastify.route(actualCharacterInfo)
+    fastify.get('/api/combat', { websocket: true }, (connection, req) => {
+        combat(connection, req, fastify)
+    })
     fastify.get('/api/test', async (request, reply) => {
         for (let i = 0; i < 10; i++) {
             reply.sse({id: String(i), data: "Some message"});

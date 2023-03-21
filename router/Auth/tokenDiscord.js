@@ -43,7 +43,7 @@ export default {
             })
             .then((result) => {
                 info = Object.assign(info, result[0].data)
-                const isServer = result[1].data.filter((item) => item.id == 875073482373869578)[0]?.id
+                const isServer = result[1].data.filter((item) => item.id == process.env.ID_DISCORD_SERVER)[0]?.id
                 if (isServer) return Promise.all([
                     connection
                         .query(checkUser, [result[0].data.id]),
