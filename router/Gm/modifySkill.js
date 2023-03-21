@@ -23,10 +23,53 @@ export default {
             connection.query(userRole, [req.user.id])
         ])
             .then((result) => {
-                if (roleList[result[1][0].role]?.level >= 5) return reply.send({text: result[0].data.message})
-                else return reply.code(403).send({text: 'Недостаточно прав'})
+                if (roleList[result[1][0].role]?.level >= 5) return reply.send({message: result[0].data.message})
+                else return reply.code(403).send({message: 'Недостаточно прав'})
             })
             .catch((err) => reply.code(500).send(err.response.data))
             .finally(() => connection.release())
+    },
+    schema: {
+        response: {
+            default: {
+                type: 'object',
+                properties: {
+                    message: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'error'
+                    }
+                }
+            },
+            200: {
+                type: 'object',
+                properties: {
+                    message: {
+                        type: 'string',
+                    },
+                    status: {
+                        type: 'string',
+                        default: 'success'
+                    },
+                }
+            },
+        },
+        body: {
+            type: 'object',
+            properties: {
+                entityName: {
+                    type: 'string',
+                },
+                skillName: {
+                    type: 'string',
+                },
+                mod: {
+                    type: 'string',
+                },
+            },
+            required: ['entityName', 'skillName', 'mod'],
+        }
     }
 }
