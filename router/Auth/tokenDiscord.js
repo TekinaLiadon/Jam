@@ -21,6 +21,7 @@ export default {
             scope: 'identify',
         })
         const connection = await this.mariadb.getConnection()
+        console.log(postData)
         return await this.axios.post('https://discord.com/api/oauth2/token', postData, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -28,7 +29,6 @@ export default {
         })
             .then(json => {
                 info = json.data
-                console.log(json.data)
                 return Promise.all([
                     this.axios.get('https://discord.com/api/users/@me', {
                         headers: {
@@ -44,7 +44,6 @@ export default {
             })
             .then((result) => {
                 info = Object.assign(info, result[0].data)
-                console.log(2)
                 const isServer = result[1].data.filter((item) => item.id == process.env.ID_DISCORD_SERVER)[0]?.id
                 if (isServer) return Promise.all([
                     connection
