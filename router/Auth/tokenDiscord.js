@@ -17,11 +17,10 @@ export default {
             client_secret: process.env.DISCORD_SECRET,
             code: req.body.discordCode,
             grant_type: 'authorization_code',
-            redirect_uri: 'http://localhost:8080/' || process.env.WEBSITE_URL, // TODO Убрать когда будет релиз
+            redirect_uri:  process.env.WEBSITE_URL, // TODO Убрать когда будет релиз
             scope: 'identify',
         })
         const connection = await this.mariadb.getConnection()
-        console.log(postData)
         return await this.axios.post('https://discord.com/api/oauth2/token', postData, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
