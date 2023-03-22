@@ -10,6 +10,9 @@ export default {
         var blacklistCheck = `SELECT blacklist FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE discord_id = ? AND blacklist=1 LIMIT 1`
 
         var info = {}
+        var redirectUri
+
+        if (req.body.host === 'prod') redirectUri = 'http://localhost:8080/'
 
         const querystring = await import('querystring');
         const postData = await querystring.stringify({
@@ -17,7 +20,7 @@ export default {
             client_secret: process.env.DISCORD_SECRET,
             code: req.body.discordCode,
             grant_type: 'authorization_code',
-            redirect_uri:  process.env.WEBSITE_URL, // TODO Убрать когда будет релиз
+            redirect_uri: redirectUri || process.env.WEBSITE_URL, // TODO Убрать когда будет релиз
             scope: 'identify',
         })
         const connection = await this.mariadb.getConnection()
