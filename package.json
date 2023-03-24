@@ -30,6 +30,7 @@
     "fastify-plugin": "^4.4.0",
     "it-pushable": "^1.4.2",
     "it-to-stream": "^1.0.0",
+    "lodash.isequal": "^4.5.0",
     "mariadb": "^3.0.0",
     "pino-pretty": "^9.1.1",
     "pm2": "^5.2.2",

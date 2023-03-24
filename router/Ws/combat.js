@@ -1,3 +1,5 @@
+
+import isEqual from 'lodash.isequal'
 function supportConn(conn, timer) {
     clearInterval(timer.ping);
     timer.ping = setInterval(() => {
@@ -41,6 +43,8 @@ export default (conn, req, fastify) => {
         userIsAlive: undefined,
     }
 
+    var charData = {}
+
     conn.socket.on('newListener', async () => {
         req.jwtVerify()
         supportConn(conn, timer)
@@ -55,11 +59,19 @@ export default (conn, req, fastify) => {
                 },
                 charInfo() {
                     getCharInfo(fastify, data, req)
-                        .then((result => conn.socket.send(JSON.stringify({message: result}))))
+                        .then((result => {
+                            charData = result
+                            conn.socket.send(JSON.stringify({message: result}))
+                        }))
                         .catch((err) => conn.socket.send(JSON.stringify({message: err})))
                     timer.characterInfo = setInterval(() => {
                         getCharInfo(fastify, data, req)
-                            .then((result => conn.socket.send(JSON.stringify({message: result}))))
+                            .then((result => {
+                                if(!isEqual(charData, result)) {
+                                    charData = result
+                                    conn.socket.send(JSON.stringify({message: result}))
+                                }
+                            }))
                             .catch((err) => conn.socket.send(JSON.stringify({message: err})))
                     }, 30000);
                 }
