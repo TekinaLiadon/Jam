@@ -22,7 +22,6 @@ import combat from "./Ws/combat.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
-    /*fastify.route(combat)*/
     fastify.route(registration)
     fastify.route(tokenDiscord)
     fastify.route(loginDiscord)

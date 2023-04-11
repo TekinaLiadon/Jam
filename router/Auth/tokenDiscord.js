@@ -12,7 +12,7 @@ export default {
         var info = {}
         var redirectUri
 
-        if (req.body.host === 'prod') redirectUri = 'http://localhost:8080/'
+        if (req.body.host !== 'prod') redirectUri = 'http://localhost:8080/'
 
         const querystring = await import('querystring');
         const postData = await querystring.stringify({

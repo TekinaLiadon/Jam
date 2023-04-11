@@ -46,7 +46,10 @@ export default (conn, req, fastify) => {
     var charData = {}
 
     conn.socket.on('newListener', async () => {
-        req.jwtVerify()
+        fastify.jwt.verify(req.query.token, (err, decoded) => {
+            if (err) endConn(conn, timer)
+            req.user = decoded
+        })
         supportConn(conn, timer)
     })
     conn.socket.on('message', async (message) => {
@@ -61,7 +64,7 @@ export default (conn, req, fastify) => {
                     getCharInfo(fastify, data, req)
                         .then((result => {
                             charData = result
-                            conn.socket.send(JSON.stringify({message: result}))
+                            conn.socket.send(JSON.stringify({charData: result}))
                         }))
                         .catch((err) => conn.socket.send(JSON.stringify({message: err})))
                     timer.characterInfo = setInterval(() => {
@@ -69,7 +72,7 @@ export default (conn, req, fastify) => {
                             .then((result => {
                                 if(!isEqual(charData, result)) {
                                     charData = result
-                                    conn.socket.send(JSON.stringify({message: result}))
+                                    conn.socket.send(JSON.stringify({charData: result}))
                                 }
                             }))
                             .catch((err) => conn.socket.send(JSON.stringify({message: err})))
