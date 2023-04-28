@@ -7,12 +7,38 @@ function supportConn(conn, timer) {
          timer.userIsAlive = false
     }, 61000);
 }
+async function getJson(fastify, data, req){
+    const connection = await fastify.mariadb.getConnection()
+    var jsonCheck = `SELECT char_json
+                              FROM ${process.env.CHARACTER_TABLE_NAME}
+                              WHERE id = ?
+                                AND character_name = ? LIMIT 1`
+
+    let promise = await new Promise(function(resolve, reject) {
+
+            connection
+                .query(jsonCheck, [req.user.id, data])
+            .then((result) => {
+                return JSON.parse(result[0].char_json)
+            })
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => {
+                reject(err)
+            })
+            .finally(() => connection.release())
+    })
+    return promise
+}
 async function getCharInfo(fastify, data, req) {
     const connection = await fastify.mariadb.getConnection()
     var characterCheck = `SELECT character_name
                               FROM ${process.env.CHARACTER_TABLE_NAME}
                               WHERE id = ?
                                 AND character_name = ? LIMIT 1`
+
+
     let promise = await new Promise(function(resolve, reject) {
         Promise.all([
             fastify.axios.get(process.env.GAMESYSTEM_URL + `/entities/${data.characterName}`),
@@ -29,6 +55,27 @@ async function getCharInfo(fastify, data, req) {
             .finally(() => connection.release())
     })
     return promise
+}
+async function saveJson(fastify, data, req) {
+    const connection = await fastify.mariadb.getConnection()
+    var jsonSave = `UPDATE ${process.env.CHARACTER_TABLE_NAME}
+                    SET char_json = ?
+                              WHERE id = ?
+                                AND character_name = ? LIMIT 1`
+    let promise = await new Promise( function(resolve, reject) {
+        const json = JSON.stringify(data.json)
+        connection
+            .query(jsonSave, [json, req.user.id, data.characterName])
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => {
+                reject(err)
+            })
+            .finally(() => connection.release())
+    })
+
+        return promise
 }
 function endConn(conn, timer) {
     clearInterval(timer?.characterInfo);
@@ -64,20 +111,40 @@ export default (conn, req, fastify) => {
                     getCharInfo(fastify, data, req)
                         .then((result => {
                             charData = result
-                            conn.socket.send(JSON.stringify({charData: result}))
+                            saveJson(fastify, Object.assign({json: charData}, data), req)
+                                .then(() => conn.socket.send(JSON.stringify({charData: result})))
                         }))
                         .catch((err) => conn.socket.send(JSON.stringify({message: err})))
-                    timer.characterInfo = setInterval(() => {
+                    timer.characterInfo = setInterval( () => {
                         getCharInfo(fastify, data, req)
                             .then((result => {
                                 if(!isEqual(charData, result)) {
                                     charData = result
-                                    conn.socket.send(JSON.stringify({charData: result}))
+                                    saveJson(fastify, Object.assign({json: charData}, data), req)
+                                        .then(() => conn.socket.send(JSON.stringify({charData: result})))
                                 }
                             }))
                             .catch((err) => conn.socket.send(JSON.stringify({message: err})))
                     }, 30000);
-                }
+                },
+                async trinketInfo() {
+                    const charJson = await getJson(fastify, data.characterName, req)
+                    console.log(charJson.trinkets)
+                    if (charJson) {
+                        const trinket = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/items/trinkets/${data.trinketName}`)
+                        conn.socket.send(JSON.stringify({trinket: trinket.data}))
+                    }
+                    else conn.socket.send(JSON.stringify({message: 'У вас нет такого тринкета'}))
+                },
+                async abilityInfo() {
+                    const charJson = await getJson(fastify, data.characterName, req)
+                    if (charJson) {
+                        const ability = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/abilities/${data.abilityName}`)
+                        console.log(ability.data)
+                        conn.socket.send(JSON.stringify({ability: ability.data}))
+                    }
+                    else conn.socket.send(JSON.stringify({message: 'У вас нет такой абилки'}))
+                },
             }[data.event]()
         } catch (err){
             console.log(err) // логгировать

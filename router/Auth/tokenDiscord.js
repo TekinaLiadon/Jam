@@ -10,9 +10,7 @@ export default {
         var blacklistCheck = `SELECT blacklist FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE discord_id = ? AND blacklist=1 LIMIT 1`
 
         var info = {}
-        var redirectUri
-
-        if (req.body.host !== 'prod') redirectUri = 'http://localhost:8080/'
+        var redirectUri = 'http://localhost:8080/'
 
         const querystring = await import('querystring');
         const postData = await querystring.stringify({
