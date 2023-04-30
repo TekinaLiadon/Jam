@@ -19,6 +19,10 @@ import modifyMaxStat from "./Gm/modifyMaxStat.js";
 import addNarrativePerk from "./Gm/addNarrativePerk.js";
 import removeNarrativePerk from "./Gm/removeNarrativePerk.js";
 import combat from "./Ws/combat.js";
+import parts from "./Gm/parts.js";
+import addBodypart from "./Gm/addBodypart.js";
+import addTrinket from "../entities/router/addTrinket.js";
+import trinketsList from "../items/router/trinketsList.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -41,6 +45,10 @@ export default async function routes(fastify, options) {
     fastify.route(addNarrativePerk)
     fastify.route(removeNarrativePerk)
     fastify.route(actualCharacterInfo)
+    fastify.route(parts)
+    fastify.route(addBodypart)
+    fastify.route(addTrinket)
+    fastify.route(trinketsList)
     fastify.get('/api/combat', { websocket: true }, (connection, req) => {
         combat(connection, req, fastify)
     })

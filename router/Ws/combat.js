@@ -129,19 +129,26 @@ export default (conn, req, fastify) => {
                 },
                 async trinketInfo() {
                     const charJson = await getJson(fastify, data.characterName, req)
-                    console.log(charJson.trinkets)
-                    if (charJson) {
-                        const trinket = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/items/trinkets/${data.trinketName}`)
-                        conn.socket.send(JSON.stringify({trinket: trinket.data}))
+                    if (charJson.trinkets.some((el) => el.trinket._id === data.trinketName)) {
+                        try {
+                            const trinket = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/items/trinkets/${data.trinketName}`)
+                            conn.socket.send(JSON.stringify({trinket: trinket.data}))
+                        } catch (e) {
+                            conn.socket.send(JSON.stringify({message: 'Ошибка Апи'}))
+                        }
                     }
                     else conn.socket.send(JSON.stringify({message: 'У вас нет такого тринкета'}))
                 },
                 async abilityInfo() {
                     const charJson = await getJson(fastify, data.characterName, req)
                     if (charJson) {
-                        const ability = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/abilities/${data.abilityName}`)
-                        console.log(ability.data)
-                        conn.socket.send(JSON.stringify({ability: ability.data}))
+                        try {
+                            const ability = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/abilities/${data.abilityName}`)
+                            console.log(ability.data)
+                            conn.socket.send(JSON.stringify({ability: ability.data}))
+                        } catch (e) {
+                            conn.socket.send(JSON.stringify({message: 'Ошибка Апи'}))
+                        }
                     }
                     else conn.socket.send(JSON.stringify({message: 'У вас нет такой абилки'}))
                 },
