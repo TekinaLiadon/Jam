@@ -27,6 +27,7 @@ import clothesList from "../items/router/clothesList.js";
 import energyShildsList from "../items/router/energyShildsList.js";
 import entityUpgradeList from "../items/router/entityUpgradeList.js";
 import partUpgradeList from "../items/router/partUpgradeList.js";
+import wearablesList from "../items/router/wearablesList.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -57,6 +58,7 @@ export default async function routes(fastify, options) {
     .route(energyShildsList)
         .route(entityUpgradeList)
         .route(partUpgradeList)
+        .route(wearablesList)
     fastify.get('/api/combat', { websocket: true }, (connection, req) => {
         combat(connection, req, fastify)
     })
