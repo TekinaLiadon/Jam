@@ -8,6 +8,7 @@ export default {
         done()
     },
     async handler(req, reply) {
+        // Надо еще обнулять роль на юзера
         var projectBan = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET blacklist = ? WHERE id = ?`
         var charactersBan = `UPDATE ${process.env.CHARACTER_TABLE_NAME} SET blacklist = ? WHERE id = ?`
         var userInfo = `SELECT id, role FROM ${process.env.CORE_TABLE_NAME} WHERE username = ? LIMIT 1`
