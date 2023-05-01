@@ -28,6 +28,8 @@ import energyShildsList from "../items/router/energyShildsList.js";
 import entityUpgradeList from "../items/router/entityUpgradeList.js";
 import partUpgradeList from "../items/router/partUpgradeList.js";
 import wearablesList from "../items/router/wearablesList.js";
+import soloTrinketInfo from "../05-entity/character/router/soloTrinketInfo.js";
+import abilityInfo from "../05-entity/character/router/abilityInfo.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -59,6 +61,8 @@ export default async function routes(fastify, options) {
         .route(entityUpgradeList)
         .route(partUpgradeList)
         .route(wearablesList)
+        .route(soloTrinketInfo)
+        .route(abilityInfo)
     fastify.get('/api/combat', { websocket: true }, (connection, req) => {
         combat(connection, req, fastify)
     })
