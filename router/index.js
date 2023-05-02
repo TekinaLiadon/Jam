@@ -30,6 +30,8 @@ import partUpgradeList from "../items/router/partUpgradeList.js";
 import wearablesList from "../items/router/wearablesList.js";
 import soloTrinketInfo from "../05-entity/character/router/soloTrinketInfo.js";
 import abilityInfo from "../05-entity/character/router/abilityInfo.js";
+import holdablesList from "../items/router/holdablesList.js";
+import takeHoldable from "./Gm/takeHoldable.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -63,6 +65,8 @@ export default async function routes(fastify, options) {
         .route(wearablesList)
         .route(soloTrinketInfo)
         .route(abilityInfo)
+        .route(holdablesList)
+        .route(takeHoldable)
     fastify.get('/api/combat', { websocket: true }, (connection, req) => {
         combat(connection, req, fastify)
     })
