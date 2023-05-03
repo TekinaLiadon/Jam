@@ -1,7 +1,8 @@
 import getJson from "../../../utils/getJson.js";
+
 export default {
     method: 'GET',
-    url: '/api/abilityInfo',
+    url: '/api/wearableInfo',
     preValidation: function (req, reply, done) {
         this.auth(req, reply)
         done()
@@ -9,14 +10,15 @@ export default {
     async handler(req, reply) {
         const connection = await this.mariadb.getConnection()
         const charJson = await getJson(connection, req.query.characterName, req.user)
-        if (charJson.abilities.abilities_list.some((el) => el.ability._id === req.query.abilityName)) {
+        // переделать
+        if (charJson) {
             try {
-                const ability = await this.axios.get(process.env.GAMESYSTEM_URL + `/abilities/${req.query.abilityName}`)
+                const ability = await this.axios.get(process.env.GAMESYSTEM_URL + `/wearables/${req.query.wearableName}?with_snippets=true`)
                 return reply.send({ability: ability.data})
             } catch (e) {
                 return reply.code(403).send({text: 'Ошибка Апи'})
             }
         }
-        else return reply.code(403).send({text: 'У вас нет такой абилки'})
+        else return reply.code(403).send({text: 'У вас нет такого предмета'})
     },
 }
