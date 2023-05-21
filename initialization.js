@@ -19,7 +19,7 @@ const globalTable = `CREATE TABLE ${process.env.CORE_TABLE_NAME} (id int NOT NUL
 const additionalInfoTable =`CREATE TABLE ${process.env.ADDITIONAL_TABLE_NAME} (id INT, email varchar(20), blacklist boolean, discord_id varchar(20), FOREIGN KEY (id) REFERENCES ${process.env.CORE_TABLE_NAME}(id), PRIMARY KEY(id) )`
 const characterTable = `CREATE TABLE ${process.env.CHARACTER_TABLE_NAME} (id int NOT NULL, character_name varchar(20) NOT NULL UNIQUE, password varchar(64), skin VARCHAR (40), uuid VARCHAR (40), blacklist boolean, is_initialized boolean DEFAULT 0, FOREIGN KEY (id) REFERENCES ${process.env.CORE_TABLE_NAME}(id), PRIMARY KEY(character_name) )`
 
-// ALTER TABLE () ADD () LONGTEXT ALTER TABLE sub_info ADD group_json LONGTEXT  ALTER TABLE `Stargazer` ADD is_initialized boolean DEFAULT 0
+// ALTER TABLE () ADD () LONGTEXT ALTER TABLE sub_info ADD group_json LONGTEXT 
 
 async function init() {
     const connection = await fastify.mariadb.getConnection()

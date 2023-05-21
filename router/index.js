@@ -13,7 +13,7 @@ import abilitiesList from "./Gm/abilitiesList.js";
 import modifyAttribute from "./Gm/modifyAttribute.js";
 import modifySkill from "./Gm/modifySkill.js";
 import blacklist from "./Gm/blacklist.js";
-import removeAbility from  './Gm/removeAbility.js'
+import removeAbility from './Gm/removeAbility.js'
 import modifyStat from "./Gm/modifyStat.js";
 import modifyMaxStat from "./Gm/modifyMaxStat.js";
 import addNarrativePerk from "./Gm/addNarrativePerk.js";
@@ -33,34 +33,35 @@ import abilityInfo from "../05-entity/character/router/abilityInfo.js";
 import holdablesList from "../items/router/holdablesList.js";
 import takeHoldable from "./Gm/takeHoldable.js";
 import wearableInfo from "../05-entity/character/router/wearableInfo.js";
+import createTestCharacter from "./Gm/createTestCharacter.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
-    .route(registration)
-    .route(tokenDiscord)
-    .route(loginDiscord)
-    .route(loadSkin)
-    .route(createCharacter)
-    .route(charactersList)
-    .route(characterInfo)
-    .route(changeRole)
-    .route(addAbility)
-    .route(abilitiesList)
-    .route(modifyAttribute)
-    .route(modifySkill)
-    .route(blacklist)
-    .route(removeAbility)
-    .route(modifyStat)
-    .route(modifyMaxStat)
-    .route(addNarrativePerk)
-    .route(removeNarrativePerk)
-    .route(actualCharacterInfo)
-    .route(parts)
-    .route(addBodypart)
-    .route(addTrinket)
-    .route(trinketsList)
-    .route(clothesList)
-    .route(energyShildsList)
+        .route(registration)
+        .route(tokenDiscord)
+        .route(loginDiscord)
+        .route(loadSkin)
+        .route(createCharacter)
+        .route(charactersList)
+        .route(characterInfo)
+        .route(changeRole)
+        .route(addAbility)
+        .route(abilitiesList)
+        .route(modifyAttribute)
+        .route(modifySkill)
+        .route(blacklist)
+        .route(removeAbility)
+        .route(modifyStat)
+        .route(modifyMaxStat)
+        .route(addNarrativePerk)
+        .route(removeNarrativePerk)
+        .route(actualCharacterInfo)
+        .route(parts)
+        .route(addBodypart)
+        .route(addTrinket)
+        .route(trinketsList)
+        .route(clothesList)
+        .route(energyShildsList)
         .route(entityUpgradeList)
         .route(partUpgradeList)
         .route(wearablesList)
@@ -69,7 +70,8 @@ export default async function routes(fastify, options) {
         .route(holdablesList)
         .route(takeHoldable)
         .route(wearableInfo)
-    fastify.get('/api/combat', { websocket: true }, (connection, req) => {
+        .route(createTestCharacter)
+    fastify.get('/api/combat', {websocket: true}, (connection, req) => {
         combat(connection, req, fastify)
     })
     fastify.get('/api/test', async (request, reply) => {
