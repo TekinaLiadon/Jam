@@ -6,7 +6,6 @@ import loadSkin from "./Character/loadSkin.js";
 import createCharacter from "./Character/createCharacter.js";
 import charactersList from "./Character/charactersList.js";
 import characterInfo from "./Character/characterInfo.js";
-import actualCharacterInfo from "./Sse/actualCharacterInfo.js";
 import changeRole from "./Gm/changeRole.js";
 import addAbility from "./Gm/addAbility.js";
 import abilitiesList from "./Gm/abilitiesList.js";
@@ -55,7 +54,6 @@ export default async function routes(fastify, options) {
         .route(modifyMaxStat)
         .route(addNarrativePerk)
         .route(removeNarrativePerk)
-        .route(actualCharacterInfo)
         .route(parts)
         .route(addBodypart)
         .route(addTrinket)

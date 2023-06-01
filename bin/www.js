@@ -3,7 +3,6 @@ import multer from 'fastify-multer'
 import dotenv from 'dotenv'
 import router from '../router/index.js'
 import dbConnector from '../database/index.js'
-import sse from '../plugins/sse/index.js'
 import path from 'path'
 import {fileURLToPath} from 'url';
 
@@ -63,7 +62,6 @@ await fastify.register(dbConnector, {
     })
     .register(import('fastify-axios'))
     .register(multer.contentParser)
-    .register(sse)
     .register(router)
     .register(import('@fastify/static'), {
         root: path.join(__dirname, '..', 'public'),
