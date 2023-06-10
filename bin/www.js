@@ -67,6 +67,7 @@ await fastify.register(dbConnector, {
         root: path.join(__dirname, '..', 'public'),
     })
     .setNotFoundHandler((req, res) => {
+        console.log(req.raw.url)
         if (req.raw.url && req.raw.url.startsWith("/api")) {
             return res.status(404).send({
                 success: false,
@@ -77,7 +78,10 @@ await fastify.register(dbConnector, {
             });
 
         }
-        res.status(200).sendFile("index.html");
+        else if (req.raw.url && req.raw.url.startsWith("/skins")) return res.sendFile(`${req.raw.url.slice(7)}.png`, path.join(__dirname, '..', 'public' , 'skins'))
+        else if (req.raw.url === '/launcher/Stargazer.exe') return res.sendFile(`Stargazer.exe`, path.join(__dirname, '..', 'public' , 'launcher'))
+        else if (req.raw.url === '/launcher/Stargazer.jar') return res.sendFile(`Stargazer.jar`, path.join(__dirname, '..', 'public' , 'launcher'))
+        else res.status(200).sendFile("index.html");
     })
 
 function normalizePort(val) {

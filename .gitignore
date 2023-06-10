@@ -8,6 +8,8 @@ lerna-debug.log*
 
 .env
 
+public/launcher
+
 data.json*
 .idea
 
