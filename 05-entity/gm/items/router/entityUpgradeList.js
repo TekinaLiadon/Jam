@@ -1,8 +1,8 @@
-import roleList from "../../enums/roleList.js";
+import roleList from "../../../../enums/roleList.js";
 
 export default {
     method: 'GET',
-    url: '/api/energyShieldsList',
+    url: '/api/entityUpgradesList',
     preValidation: function (req, reply, done) {
         this.auth(req, reply)
         done()
@@ -11,7 +11,7 @@ export default {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()
         return await Promise.all([
-            this.axios.get(process.env.GAMESYSTEM_URL + '/items/energy_shields', {
+            this.axios.get(process.env.GAMESYSTEM_URL + '/items/entity_upgrades', {
                     headers: {'Content-Type': 'application/json'},
                 }
             ),

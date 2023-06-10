@@ -70,7 +70,7 @@ export default {
             .then((result) => {
                 return info.insertId ?
                     connection
-                        .query(updateGuilds, [info.guildJson, info.insertId])
+                        .query(updateGuilds, [info.guildJson, parseInt(info.insertId, 10)])
                     : connection
                         .query(sub_infoReg, [parseInt(result.insertId, 10), info.email || null, 0, info.id, info.guildJson])
                         .then(()=> info.insertId = parseInt(result.insertId, 10))

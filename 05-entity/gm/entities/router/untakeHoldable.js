@@ -1,8 +1,8 @@
-import roleList from "../../enums/roleList.js";
+import roleList from "../../../../enums/roleList.js";
 
 export default {
     method: 'POST',
-    url: '/api/takeHoldable',
+    url: '/api/untakeHoldable',
     preValidation: function (req, reply, done) {
         this.auth(req, reply)
         done()
@@ -11,11 +11,9 @@ export default {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()
         return await Promise.all([
-            this.axios.post(process.env.GAMESYSTEM_URL + '/entities/take_holdable',
+            this.axios.post(process.env.GAMESYSTEM_URL + '/entities/untake_holdable',
                 JSON.stringify({
                     entity: req.body.entityName,
-                    holdable: req.body.holdable,
-                    upgrades: req.body.upgrades || [],
                     hand: req.body.hand
                 }), {
                     headers: {'Content-Type': 'application/json'},

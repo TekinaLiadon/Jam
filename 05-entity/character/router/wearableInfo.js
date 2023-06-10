@@ -11,9 +11,16 @@ export default {
         const connection = await this.mariadb.getConnection()
         const charJson = await getJson(connection, req.query.characterName, req.user)
         // переделать
-        if (charJson) {
+        let isWearable = false;
+        for (var i = 0; i < charJson.parts.length; i++) {
+            if (Object.values(charJson.parts[i])?.some((item) => item?.armor_element?.item?._id === req.query.wearableName)) {
+                isWearable = true
+                break
+            }
+        }
+        if (isWearable) {
             try {
-                const ability = await this.axios.get(process.env.GAMESYSTEM_URL + `/wearables/${req.query.wearableName}?with_snippets=true`)
+                const ability = await this.axios.get(process.env.GAMESYSTEM_URL + `/items/wearables/${req.query.wearableName}?with_snippets=true`)
                 return reply.send({ability: ability.data})
             } catch (e) {
                 return reply.code(403).send({text: 'Ошибка Апи'})

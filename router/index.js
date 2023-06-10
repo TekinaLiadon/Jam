@@ -20,19 +20,21 @@ import removeNarrativePerk from "./Gm/removeNarrativePerk.js";
 import combat from "./Ws/combat.js";
 import parts from "./Gm/parts.js";
 import addBodypart from "./Gm/addBodypart.js";
-import addTrinket from "../entities/router/addTrinket.js";
-import trinketsList from "../items/router/trinketsList.js";
-import clothesList from "../items/router/clothesList.js";
-import energyShildsList from "../items/router/energyShildsList.js";
-import entityUpgradeList from "../items/router/entityUpgradeList.js";
-import partUpgradeList from "../items/router/partUpgradeList.js";
-import wearablesList from "../items/router/wearablesList.js";
+import addTrinket from "../05-entity/gm/entities/router/addTrinket.js";
+import trinketsList from "../05-entity/gm/items/router/trinketsList.js";
+import clothesList from "../05-entity/gm/items/router/clothesList.js";
+import energyShildsList from "../05-entity/gm/items/router/energyShildsList.js";
+import entityUpgradeList from "../05-entity/gm/items/router/entityUpgradeList.js";
+import partUpgradeList from "../05-entity/gm/items/router/partUpgradeList.js";
+import wearablesList from "../05-entity/gm/items/router/wearablesList.js";
 import soloTrinketInfo from "../05-entity/character/router/soloTrinketInfo.js";
 import abilityInfo from "../05-entity/character/router/abilityInfo.js";
-import holdablesList from "../items/router/holdablesList.js";
-import takeHoldable from "./Gm/takeHoldable.js";
+import holdablesList from "../05-entity/gm/items/router/holdablesList.js";
+import takeHoldable from "../05-entity/gm/entities/router/takeHoldable.js";
 import wearableInfo from "../05-entity/character/router/wearableInfo.js";
 import createTestCharacter from "./Gm/createTestCharacter.js";
+import untakeHoldable from "../05-entity/gm/entities/router/untakeHoldable.js";
+import wearArmor from "../05-entity/gm/entities/router/wearArmor.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -69,6 +71,8 @@ export default async function routes(fastify, options) {
         .route(takeHoldable)
         .route(wearableInfo)
         .route(createTestCharacter)
+        .route(untakeHoldable)
+        .route(wearArmor)
     fastify.get('/api/combat', {websocket: true}, (connection, req) => {
         combat(connection, req, fastify)
     })
