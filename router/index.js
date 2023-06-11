@@ -37,6 +37,7 @@ import untakeHoldable from "../05-entity/gm/entities/router/untakeHoldable.js";
 import wearArmor from "../05-entity/gm/entities/router/wearArmor.js";
 import changeType from "../05-entity/gm/entities/router/changeType.js";
 import addUpgrade from "../05-entity/gm/entities/router/addUpgrade.js";
+import removeUpgrade from "../05-entity/gm/entities/router/removeUpgrade.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -77,6 +78,7 @@ export default async function routes(fastify, options) {
         .route(wearArmor)
         .route(changeType)
         .route(addUpgrade)
+        .route(removeUpgrade)
     fastify.get('/api/combat', {websocket: true}, (connection, req) => {
         combat(connection, req, fastify)
     })
