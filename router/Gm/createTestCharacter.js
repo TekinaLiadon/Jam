@@ -18,7 +18,7 @@ export default {
     },
     async handler(req, reply) {
         const connection = await this.mariadb.getConnection()
-        var character = `INSERT INTO ${process.env.CHARACTER_TABLE_NAME} (id,character_name,password,skin,uuid,blacklist) VALUES ( ?, ?, ?, ?, ?, ? )`
+        var character = `INSERT INTO ${process.env.CHARACTER_TABLE_NAME} (id,character_name,password,skin,uuid,blacklist, is_initialized) VALUES ( ?, ?, ?, ?, ?, ?, ? )`
         var characterCheck = `SELECT character_name FROM ${process.env.CHARACTER_TABLE_NAME} WHERE character_name = ? LIMIT 1`
         return await connection
             .query(characterCheck, [req.body.name])
@@ -42,7 +42,7 @@ export default {
                 if (info.data.error?.code) throw info.data.error
                 else return req.hash.then((result) => {
                     return connection
-                        .query(character, [req.user.id, req.body.name, result, `default.png`, req.uuid, 0])
+                        .query(character, [req.user.id, req.body.name, result, `default.png`, req.uuid, 0, 1])
                 })
             })
             .then(() => reply.send({
