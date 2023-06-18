@@ -38,7 +38,7 @@ export default {
                 return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/wear_trinket',
                     JSON.stringify({
                         entity: req.body.entityName,
-                        trinket: "trinket_of_fatigue",
+                        trinket: "human_only_trinket",
                     }), {
                         headers: {'Content-Type': 'application/json'},
                     }
@@ -96,6 +96,16 @@ export default {
                 )
             })
             .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_tag',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        tag: 'orc'
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
                 return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/mod_skill',
                     JSON.stringify({
                         entity: req.body.entityName,
@@ -111,6 +121,16 @@ export default {
                     JSON.stringify({
                         entity: req.body.entityName,
                         ability: 'electric_charge',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'generic_evade',
                     }), {
                         headers: {'Content-Type': 'application/json'},
                     }

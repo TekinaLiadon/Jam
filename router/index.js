@@ -40,6 +40,8 @@ import addUpgrade from "../05-entity/gm/entities/router/addUpgrade.js";
 import removeUpgrade from "../05-entity/gm/entities/router/removeUpgrade.js";
 import changeCharacter from "../05-entity/gm/changeCharacter.js";
 import defAbilitiesList from "../05-entity/gm/entities/router/defAbilitiesList.js";
+import defAbilityInfo from "../05-entity/character/router/defAbilityInfo.js";
+import addTag from "../05-entity/gm/entities/router/addTag.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -83,6 +85,8 @@ export default async function routes(fastify, options) {
         .route(removeUpgrade)
         .route(changeCharacter)
         .route(defAbilitiesList)
+        .route(defAbilityInfo)
+        .route(addTag)
     fastify.get('/api/combat', {websocket: true}, (connection, req) => {
         combat(connection, req, fastify)
     })
