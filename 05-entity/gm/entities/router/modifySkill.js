@@ -1,8 +1,8 @@
-import roleList from "../../enums/roleList.js";
+import roleList from "../../../../enums/roleList.js";
 
 export default {
     method: 'POST',
-    url: '/api/removeNarrativePerk',
+    url: '/api/modifySkill',
     preValidation: function (req, reply, done) {
         this.auth(req, reply)
         done()
@@ -10,22 +10,23 @@ export default {
     async handler(req, reply) {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()
-        return Promise.all([
-            this.axios.post(process.env.GAMESYSTEM_URL + '/characters/remove_narrative_perk',
-                JSON.stringify({
-                    player: req.body.entityName,
-                    perk_name: req.body.perkName,
-                }), {
-                    headers: {'Content-Type': 'application/json'},
-                }
-            ),
-            connection.query(userRole, [req.user.id])
-        ])
+        return await connection.query(userRole, [req.user.id])
             .then((result) => {
-                if (roleList[result[1][0].role]?.level >= 5) return reply.send({message: result[0].data.message})
+                if (roleList[result[0].role]?.level >= 5) return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/mod_skill',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        modified_object: req.body.skillName,
+                        mod: req.body.mod
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
                 else return reply.code(403).send({message: 'Недостаточно прав'})
             })
-            .catch((err) => reply.code(500).send(err.response.data))
+            .then((result) => {
+                return reply.send(result.data)
+            })
+            .catch((err) => reply.code(500).send(err))
             .finally(() => connection.release())
     },
     schema: {
@@ -61,11 +62,14 @@ export default {
                 entityName: {
                     type: 'string',
                 },
-                perkName: {
+                skillName: {
+                    type: 'string',
+                },
+                mod: {
                     type: 'string',
                 },
             },
-            required: ['entityName', 'perkName'],
+            required: ['entityName', 'skillName', 'mod'],
         }
-    },
+    }
 }

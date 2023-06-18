@@ -7,19 +7,19 @@ import createCharacter from "./Character/createCharacter.js";
 import charactersList from "./Character/charactersList.js";
 import characterInfo from "./Character/characterInfo.js";
 import changeRole from "./Gm/changeRole.js";
-import addAbility from "./Gm/addAbility.js";
-import abilitiesList from "./Gm/abilitiesList.js";
-import modifyAttribute from "./Gm/modifyAttribute.js";
-import modifySkill from "./Gm/modifySkill.js";
+import addAbility from "../05-entity/gm/entities/router/addAbility.js";
+import abilitiesList from "../05-entity/gm/entities/router/abilitiesList.js";
+import modifyAttribute from "../05-entity/gm/entities/router/modifyAttribute.js";
+import modifySkill from "../05-entity/gm/entities/router/modifySkill.js";
 import blacklist from "./Gm/blacklist.js";
-import removeAbility from './Gm/removeAbility.js'
-import modifyStat from "./Gm/modifyStat.js";
-import modifyMaxStat from "./Gm/modifyMaxStat.js";
-import addNarrativePerk from "./Gm/addNarrativePerk.js";
-import removeNarrativePerk from "./Gm/removeNarrativePerk.js";
+import removeAbility from '../05-entity/gm/entities/router/removeAbility.js'
+import modifyStat from "../05-entity/gm/entities/router/modifyStat.js";
+import modifyMaxStat from "../05-entity/gm/entities/router/modifyMaxStat.js";
+import addNarrativePerk from "../05-entity/gm/entities/router/addNarrativePerk.js";
+import removeNarrativePerk from "../05-entity/gm/entities/router/removeNarrativePerk.js";
 import combat from "./Ws/combat.js";
 import parts from "./Gm/parts.js";
-import addBodypart from "./Gm/addBodypart.js";
+import addBodypart from "../05-entity/gm/entities/router/addBodypart.js";
 import addTrinket from "../05-entity/gm/entities/router/addTrinket.js";
 import trinketsList from "../05-entity/gm/items/router/trinketsList.js";
 import clothesList from "../05-entity/gm/items/router/clothesList.js";
@@ -32,13 +32,14 @@ import abilityInfo from "../05-entity/character/router/abilityInfo.js";
 import holdablesList from "../05-entity/gm/items/router/holdablesList.js";
 import takeHoldable from "../05-entity/gm/entities/router/takeHoldable.js";
 import wearableInfo from "../05-entity/character/router/wearableInfo.js";
-import createTestCharacter from "./Gm/createTestCharacter.js";
+import createTestCharacter from "../05-entity/gm/createTestCharacter.js";
 import untakeHoldable from "../05-entity/gm/entities/router/untakeHoldable.js";
 import wearArmor from "../05-entity/gm/entities/router/wearArmor.js";
 import changeType from "../05-entity/gm/entities/router/changeType.js";
 import addUpgrade from "../05-entity/gm/entities/router/addUpgrade.js";
 import removeUpgrade from "../05-entity/gm/entities/router/removeUpgrade.js";
 import changeCharacter from "../05-entity/gm/changeCharacter.js";
+import defAbilitiesList from "../05-entity/gm/entities/router/defAbilitiesList.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -81,6 +82,7 @@ export default async function routes(fastify, options) {
         .route(addUpgrade)
         .route(removeUpgrade)
         .route(changeCharacter)
+        .route(defAbilitiesList)
     fastify.get('/api/combat', {websocket: true}, (connection, req) => {
         combat(connection, req, fastify)
     })

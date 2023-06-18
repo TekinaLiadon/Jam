@@ -1,4 +1,4 @@
-import roleList from "../../enums/roleList.js";
+import roleList from "../../../../enums/roleList.js";
 
 export default {
     method: 'GET',
@@ -44,6 +44,9 @@ export default {
                     type: 'object',
                     properties: {
                         _id: {
+                            type: 'string',
+                        },
+                        uid: {
                             type: 'string',
                         },
                         name: {

@@ -85,26 +85,132 @@ export default {
                 )
             })
             .then(() => {
-                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/wear_armor',
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/characters/add_narrative_perk',
                     JSON.stringify({
-                        entity: req.body.entityName,
-                        wearable: 'kaska',
-                        upgrades: [],
-                        bodypart_key: 'skeletal_head',
-                        bodypart: 'skeletal_head',
-                        curr_durability: 100,
-                        time_left: 0,
+                        player: req.body.entityName,
+                        perk_name: 'Приколократия',
+                        perk_descritpion: "История про Мвдио от Мардука"
                     }), {
                         headers: {'Content-Type': 'application/json'},
                     }
                 )
             })
             .then(() => {
-                return this.axios.post(process.env.GAMESYSTEM_URL + '/characters/add_narrative_perk',
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/mod_skill',
                     JSON.stringify({
-                        player: req.body.entityName,
-                        perk_name: 'Приколократия',
-                        perk_descritpion: "История про Мвдио от Мардука"
+                        entity: req.body.entityName,
+                        modified_object: "ELECTRODYNAMICS",
+                        mod: "+20"
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'electric_charge',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'excessive_energy',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'plasma_dome',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'living_bolt',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'realization_of_potential',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'perfect_storm',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'leech',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'basic_telekinesis',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'small_mana_charge',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'shield_deformation',
+                    }), {
+                        headers: {'Content-Type': 'application/json'},
+                    }
+                )
+            })
+            .then(() => {
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/add_ability',
+                    JSON.stringify({
+                        entity: req.body.entityName,
+                        ability: 'frosts',
                     }), {
                         headers: {'Content-Type': 'application/json'},
                     }

@@ -1,8 +1,8 @@
-import roleList from "../../enums/roleList.js";
+import roleList from "../../../../enums/roleList.js";
 
 export default {
     method: 'POST',
-    url: '/api/modifyStat',
+    url: '/api/removeAbility',
     preValidation: function (req, reply, done) {
         this.auth(req, reply)
         done()
@@ -10,12 +10,11 @@ export default {
     async handler(req, reply) {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()
-        return await Promise.all([
-            this.axios.post(process.env.GAMESYSTEM_URL + '/entities/mod_stat',
+        return Promise.all([
+            this.axios.post(process.env.GAMESYSTEM_URL + '/entities/remove_ability',
                 JSON.stringify({
                     entity: req.body.entityName,
-                    modified_object: req.body.statName,
-                    mod: req.body.mod
+                    ability: req.body.abilityName,
                 }), {
                     headers: {'Content-Type': 'application/json'},
                 }
@@ -26,7 +25,7 @@ export default {
                 if (roleList[result[1][0].role]?.level >= 5) return reply.send({message: result[0].data.message})
                 else return reply.code(403).send({message: 'Недостаточно прав'})
             })
-            .catch((err) => reply.code(500).send(err.response.data))
+            .catch((err) => reply.code(500).send(err.response?.data))
             .finally(() => connection.release())
     },
     schema: {
@@ -62,14 +61,11 @@ export default {
                 entityName: {
                     type: 'string',
                 },
-                statName: {
-                    type: 'string',
-                },
-                mod: {
+                abilityName: {
                     type: 'string',
                 },
             },
-            required: ['entityName', 'statName', 'mod'],
+            required: ['entityName', 'abilityName'],
         }
-    }
+    },
 }

@@ -18,9 +18,11 @@ fastify.register(dbConnector, {
 const globalTable = `CREATE TABLE ${process.env.CORE_TABLE_NAME} (id int NOT NULL AUTO_INCREMENT, username varchar(20) NOT NULL UNIQUE, password varchar(64), role varchar(20), access_token VARCHAR (30), refresh_token VARCHAR (30), PRIMARY KEY(id) )`
 const additionalInfoTable =`CREATE TABLE ${process.env.ADDITIONAL_TABLE_NAME} (id INT, email varchar(20), blacklist boolean, discord_id varchar(20), FOREIGN KEY (id) REFERENCES ${process.env.CORE_TABLE_NAME}(id), PRIMARY KEY(id) )`
 const characterTable = `CREATE TABLE ${process.env.CHARACTER_TABLE_NAME} (id int NOT NULL, character_name varchar(20) NOT NULL UNIQUE, password varchar(64), skin VARCHAR (40), uuid VARCHAR (40), blacklist boolean, is_initialized boolean DEFAULT 0, FOREIGN KEY (id) REFERENCES ${process.env.CORE_TABLE_NAME}(id), PRIMARY KEY(character_name) )`
+const skinsTable =`CREATE TABLE ${process.env.SKINS_TABLE_NAME} (id INT, character_id int NOT NULL, skin VARCHAR (40), FOREIGN KEY (character_id) REFERENCES ${process.env.CORE_TABLE_NAME}(id), PRIMARY KEY(id) )`
 
 // ALTER TABLE () ADD () LONGTEXT ALTER TABLE sub_info ADD group_json LONGTEXT
 // ALTER TABLE sub_info MODIFY COLUMN group_json LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+// CREATE TABLE skins (id INT, character_id int NOT NULL, skin VARCHAR (40), FOREIGN KEY (character_id) REFERENCES global(id), PRIMARY KEY(id) )
 
 async function init() {
     const connection = await fastify.mariadb.getConnection()

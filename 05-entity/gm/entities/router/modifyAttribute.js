@@ -1,8 +1,8 @@
-import roleList from "../../enums/roleList.js";
+import roleList from "../../../../enums/roleList.js";
 
 export default {
     method: 'POST',
-    url: '/api/addNarrativePerk',
+    url: '/api/modifyAttribute',
     preValidation: function (req, reply, done) {
         this.auth(req, reply)
         done()
@@ -10,16 +10,16 @@ export default {
     async handler(req, reply) {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()
-        return Promise.all([
-            this.axios.post(process.env.GAMESYSTEM_URL + '/characters/add_narrative_perk',
-                JSON.stringify({
-                    player: req.body.entityName,
-                    perk_name: req.body.perkName,
-                    perk_descritpion: req.body.description
-                }), {
-                    headers: {'Content-Type': 'application/json'},
-                }
-            ),
+        return await Promise.all([
+            this.axios.post(process.env.GAMESYSTEM_URL + '/entities/mod_attribute',
+            JSON.stringify({
+                entity: req.body.entityName,
+                modified_object: req.body.attributeName,
+                mod: req.body.mod
+            }), {
+                headers: {'Content-Type': 'application/json'},
+            }
+        ),
             connection.query(userRole, [req.user.id])
         ])
             .then((result) => {
@@ -62,14 +62,14 @@ export default {
                 entityName: {
                     type: 'string',
                 },
-                perkName: {
+                attributeName: {
                     type: 'string',
                 },
-                description: {
+                mod: {
                     type: 'string',
                 },
             },
-            required: ['entityName', 'description', 'perkName'],
+            required: ['entityName', 'attributeName', 'mod'],
         }
-    },
+    }
 }
