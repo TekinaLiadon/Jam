@@ -96,6 +96,10 @@ fastify.addHook('preSerialization', (request, reply, payload, done) => {
         )*/
     done(null, payload)
 })
+fastify.addHook('preValidation', (req, reply, done) => {
+    if(req.headers?.authorization) req.jwtVerify()
+    done()
+})
 function normalizePort(val) {
     let port = parseInt(val, 10);
 
