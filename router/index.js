@@ -48,6 +48,7 @@ import clothesInfo from "../05-entity/character/router/clothesInfo.js";
 import partUpgradesInfo from "../05-entity/character/router/partUpgradesInfo.js";
 import entityUpgragesInfo from "../05-entity/character/router/entityUpgragesInfo.js";
 import energyShildInfo from "../05-entity/character/router/energyShildInfo.js";
+import holdableInfo from "../05-entity/character/router/holdableInfo.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -99,6 +100,7 @@ export default async function routes(fastify, options) {
         .route(partUpgradesInfo)
         .route(entityUpgragesInfo)
         .route(energyShildInfo)
+        .route(holdableInfo)
     fastify.get('/api/combat', {websocket: true}, (connection, req) => {
         combat(connection, req, fastify)
     })

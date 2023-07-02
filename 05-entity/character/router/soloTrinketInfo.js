@@ -2,7 +2,7 @@ import coreHandler from "../utils/coreHandler.js";
 export default {
     method: 'GET',
     url: '/api/trinketInfo',
-    async handler(req, reply) {
+    handler(req, reply) {
         return coreHandler(req, reply,{
             mariadb: this.mariadb,
             axios: this.axios,
