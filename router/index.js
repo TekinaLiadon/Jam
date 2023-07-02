@@ -46,6 +46,7 @@ import addPartUpgrade from "../05-entity/gm/entities/router/addPartUpgrade.js";
 import partInfo from "../05-entity/character/router/partInfo.js";
 import clothesInfo from "../05-entity/character/router/clothesInfo.js";
 import partUpgradesInfo from "../05-entity/character/router/partUpgradesInfo.js";
+import entityUpgragesInfo from "../05-entity/character/router/entityUpgragesInfo.js";
 
 export default async function routes(fastify, options) {
     fastify.route(login)
@@ -95,6 +96,7 @@ export default async function routes(fastify, options) {
         .route(partInfo)
         .route(clothesInfo)
         .route(partUpgradesInfo)
+        .route(entityUpgragesInfo)
     fastify.get('/api/combat', {websocket: true}, (connection, req) => {
         combat(connection, req, fastify)
     })
