@@ -28,6 +28,7 @@ const envToLogger = {
 const fastify = Fastify({
     /*http2: true,*/
     logger: envToLogger[process.env.NODE_ENV] ?? true,
+    trustProxy: true,
 })
 await fastify.register(import('@fastify/cors'), {
     origin: 'http://localhost:8080',
@@ -67,7 +68,6 @@ await fastify.register(dbConnector, {
         root: path.join(__dirname, '..', 'public'),
     })
     .setNotFoundHandler((req, res) => {
-        console.log(req.raw.url)
         if (req.raw.url && req.raw.url.startsWith("/api")) {
             return res.status(404).send({
                 success: false,
@@ -76,7 +76,6 @@ await fastify.register(dbConnector, {
                     message: "Not Found",
                 },
             });
-
         }
         else if (req.raw.url && req.raw.url.startsWith("/skins")) return res.sendFile(`${req.raw.url.slice(7)}.png`, path.join(__dirname, '..', 'public' , 'skins'))
         else if (req.raw.url === '/launcher/Stargazer.exe') return res.sendFile(`Stargazer.exe`, path.join(__dirname, '..', 'public' , 'launcher'))
@@ -84,6 +83,19 @@ await fastify.register(dbConnector, {
         else res.status(200).sendFile("index.html");
     })
 
+fastify.addHook('preSerialization', (request, reply, payload, done) => {
+    /*if(request.headers?.authorization)
+        console.log(request.headers.authorization,
+            request.user,
+            request.headers['x-forwarded-for'] || request.ip,
+            request.protocol + '://' +request.hostname,
+            request.headers['user-agent'],
+            request.headers['sec-ch-ua-platform'],
+            request.headers['sec-ch-ua'],
+            request.headers['accept-language'],
+        )*/
+    done(null, payload)
+})
 function normalizePort(val) {
     let port = parseInt(val, 10);
 
