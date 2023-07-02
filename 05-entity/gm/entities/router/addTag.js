@@ -3,10 +3,6 @@ import roleList from "../../../../enums/roleList.js";
 export default {
     method: 'POST',
     url: '/api/addTag',
-    preValidation: function (req, reply, done) {
-        this.auth(req, reply)
-        done()
-    },
     async handler(req, reply) {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
         var connection = await this.mariadb.getConnection()

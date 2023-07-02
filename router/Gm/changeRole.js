@@ -3,10 +3,6 @@ import roleList from "../../enums/roleList.js";
 export default {
     method: 'POST',
     url: '/api/changeRole',
-    preValidation: function (req, reply, done) {
-        this.auth(req, reply)
-        done()
-    },
     async handler(req, reply) {
         var userRole = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? AND role = 'admin' LIMIT 1`
         var selectCharacterName = `SELECT id FROM ${process.env.CHARACTER_TABLE_NAME} WHERE character_name = ? LIMIT 1`

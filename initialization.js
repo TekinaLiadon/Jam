@@ -22,7 +22,7 @@ const skinsTable =`CREATE TABLE ${process.env.SKINS_TABLE_NAME} (id INT, charact
 
 // ALTER TABLE () ADD () LONGTEXT ALTER TABLE sub_info ADD group_json LONGTEXT
 // ALTER TABLE sub_info MODIFY COLUMN group_json LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-// CREATE TABLE skins (id INT, character_id int NOT NULL, skin VARCHAR (40), FOREIGN KEY (character_id) REFERENCES global(id), PRIMARY KEY(id) )
+// CREATE TABLE skins (id INT NOT NULL, skin_id int NOT NULL AUTO_INCREMENT, skin VARCHAR (40), FOREIGN KEY (id) REFERENCES global(id), PRIMARY KEY(skin_id) )
 
 async function init() {
     const connection = await fastify.mariadb.getConnection()

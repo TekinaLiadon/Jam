@@ -14,18 +14,19 @@ const upload = multer({
 export default {
     method: 'POST',
     url: '/api/loadSkin',
-    preValidation: function (req, reply, done) {
-        this.auth(req, reply)
-        done()
-    },
     preHandler: upload.single('skin'),
     async handler(req, reply) {
         const connection = await this.mariadb.getConnection()
         const getCharacterName = `SELECT character_name FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
-        return await connection
-            .query(getCharacterName, [req.user.id])
+        const getSkins = `SELECT skin FROM ${process.env.SKINS_TABLE_NAME} WHERE id = ?`
+        return await Promise.all([
+            connection
+                .query(getCharacterName, [req.user.id]),
+            connection
+                .query(getSkins, [req.user.id])
+        ])
             .then((result) => {
-                if (!result.find((item) => item.character_name === req.body.name)?.character_name) reply.code(404).send({
+                if (!result[0].find((item) => item.character_name === req.body.name)?.character_name) reply.code(404).send({
                     message: 'Персонаж не найден'
                 })
                 else if (req.file?.mimetype !== 'image/png') reply.code(400).send({
@@ -34,14 +35,24 @@ export default {
                 else {
                     let skinName
                     req.body.tag ? skinName = req.body.name + '-' + req.body.tag : skinName = req.body.name
+                    var skinPng = `${skinName}.png`
                     return new Promise(function(resolve, reject) {
-                        fs.writeFile(path.resolve(`public/skins/${skinName}.png`), req.file.buffer, (err) => {
+                        fs.writeFile(path.resolve(`public/skins/${skinPng}`), req.file.buffer, (err) => {
                             if (err) reject('Ошибка записи')
-                            if (req.body.tag) resolve()
                             else {
                                 const getCharacterName = `UPDATE ${process.env.CHARACTER_TABLE_NAME} SET skin = ? WHERE character_name = ? `
-                                connection
-                                    .query(getCharacterName, [`${skinName}.png`, req.body.name])
+                                const insertSkin = `INSERT INTO ${process.env.SKINS_TABLE_NAME} (id, skin) VALUES ( ?, ?)`
+                                if (result[1].some((el) => el.skin === skinPng)) resolve()
+                                else if(req.body.tag) connection
+                                    .query(insertSkin, [req.user.id, skinPng])
+                                    .then(() => resolve())
+                                    .catch((err) => reject(err))
+                                else Promise.all([
+                                    connection
+                                        .query(getCharacterName, [skinPng, req.body.name]),
+                                    connection
+                                        .query(insertSkin, [req.user.id, skinPng])
+                                ])
                                     .then(() => resolve())
                                     .catch((err) => reject(err))
                             }

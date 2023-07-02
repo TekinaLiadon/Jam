@@ -3,10 +3,6 @@ import roleList from "../../enums/roleList.js";
 export default {
     method: 'POST',
     url: '/api/blacklist',
-    preValidation: function (req, reply, done) {
-        this.auth(req, reply)
-        done()
-    },
     async handler(req, reply) {
         // Надо еще обнулять роль на юзера
         var projectBan = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET blacklist = ? WHERE id = ?`

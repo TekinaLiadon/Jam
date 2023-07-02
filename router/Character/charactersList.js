@@ -1,10 +1,6 @@
 export default {
     method: 'GET',
     url: '/api/charactersList',
-    preValidation: function (req, reply, done) {
-        this.auth(req, reply)
-        done()
-    },
     async handler(req, reply) {
         const connection = await this.mariadb.getConnection()
         var characterCheck = `SELECT character_name, skin, uuid FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`

@@ -2,7 +2,6 @@ export default {
     method: 'GET',
     url: '/api/characterInfo',
     async handler(req, reply) {
-        await this.auth(req, reply)
         const connection = await this.mariadb.getConnection()
         var characterCheck = `SELECT character_name, is_initialized
                               FROM ${process.env.CHARACTER_TABLE_NAME}

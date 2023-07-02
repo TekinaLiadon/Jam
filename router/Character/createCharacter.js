@@ -2,10 +2,6 @@
 export default {
     method: 'POST',
     url: '/api/createCharacter',
-    preValidation: function (req, reply, done) {
-        this.auth(req, reply)
-        done()
-    },
     preHandler: function (req, reply, done) {
         req.hash = new Promise((resolve, reject) => {
             this.bcrypt.hash(req.body.password)
