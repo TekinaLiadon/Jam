@@ -5,7 +5,6 @@ export default async function getJson(connection, data, user){
                                 AND character_name = ? LIMIT 1`
 
     let promise = await new Promise(function(resolve, reject) {
-
         connection
             .query(jsonCheck, [user.id, data])
             .then((result) => {

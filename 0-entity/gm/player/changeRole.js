@@ -1,4 +1,4 @@
-import roleList from "../../enums/roleList.js";
+import roleList from "../../../enums/roleList.js";
 
 export default {
     method: 'POST',

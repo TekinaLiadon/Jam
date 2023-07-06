@@ -1,35 +1,14 @@
 
 import isEqual from 'lodash.isequal'
+
+import getJson from "../../utils/getJson.js";
+import coreHandler from "../Ws/coreHandler.js"
 function supportConn(conn, timer) {
     clearInterval(timer.ping);
     timer.ping = setInterval(() => {
         if (!timer.userIsAlive) endConn(conn, timer)
          timer.userIsAlive = false
     }, 61000);
-}
-async function getJson(fastify, data, req){
-    const connection = await fastify.mariadb.getConnection()
-    var jsonCheck = `SELECT char_json
-                              FROM ${process.env.CHARACTER_TABLE_NAME}
-                              WHERE id = ?
-                                AND character_name = ? LIMIT 1`
-
-    let promise = await new Promise(function(resolve, reject) {
-
-            connection
-                .query(jsonCheck, [req.user.id, data])
-            .then((result) => {
-                return JSON.parse(result[0].char_json)
-            })
-            .then((result) => {
-                resolve(result)
-            })
-            .catch((err) => {
-                reject(err)
-            })
-            .finally(() => connection.release())
-    })
-    return promise
 }
 async function getCharInfo(fastify, data, req) {
     const connection = await fastify.mariadb.getConnection()
@@ -128,23 +107,91 @@ export default (conn, req, fastify) => {
                     }, 30000);
                 },
                 async trinketInfo() {
-                    const charJson = await getJson(fastify, data.characterName, req)
-                    if (charJson.trinkets.some((el) => el.trinket._id === data.trinketName)) {
-                        try {
-                            const trinket = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/items/trinkets/${data.trinketName}`)
-                            conn.socket.send(JSON.stringify({trinket: trinket.data}))
-                        } catch (e) {
-                            conn.socket.send(JSON.stringify({message: 'Ошибка Апи'}))
-                        }
-                    }
-                    else conn.socket.send(JSON.stringify({message: 'У вас нет такого тринкета'}))
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/items/trinkets/${data.trinketName}?with_snippets=true`,
+                        err: 'У вас нет такого тринкета'
+                    })
+                    await conn.socket.send(JSON.stringify(result))
+                },
+                async clothesInfo() {
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/items/clothes/${data.clothesName}?with_snippets=true`,
+                        err: 'У вас нет такой одежды'
+                    })
+                    await conn.socket.send(JSON.stringify(result))
+                },
+                async energyShieldsInfo() {
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/items/energy_shields/${data.energyShields}?with_snippets=true`,
+                        err: 'У вас нет такого щита'
+                    })
+                    await conn.socket.send(JSON.stringify(result))
+                },
+                async entityUpgradesInfo() {
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/items/entity_upgrades/${data.entityUpgrades}`,
+                        err: 'У вас нет такого апгрейда'
+                    })
+                    await conn.socket.send(JSON.stringify(result))
+                },
+                async partInfo() {
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/parts/${data.partName}`,
+                        err: 'У вас нет такой части тела'
+                    })
+                    await conn.socket.send(JSON.stringify(result))
+                },
+                async partUpgradesInfo() {
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/items/part_upgrades/${data.partUpgrades}`,
+                        err: 'У вас нет такого абгрейда'
+                    })
+                    await conn.socket.send(JSON.stringify(result))
+                },
+                async wearableInfo() {
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/items/wearables/${data.wearableName}?with_snippets=true`,
+                        err: 'У вас нет такого элемента брони',
+                    })
+                    await conn.socket.send(JSON.stringify(result))
+                },
+                async holdableInfo() {
+                    const result = await coreHandler(req, data, {
+                        mariadb: fastify.mariadb,
+                        axios: fastify.axios,
+                        type: data.event,
+                        url: `/items/holdables/${data.holdable}?with_snippets=true`,
+                        err: 'У вас нет в руках такого предмета'
+                    })
+                    await conn.socket.send(JSON.stringify(result))
                 },
                 async abilityInfo() {
-                    const charJson = await getJson(fastify, data.characterName, req)
+                    const connection = await fastify.mariadb.getConnection()
+                    const charJson = await getJson(connection, data.characterName, req.user)
                     if (charJson) {
                         try {
                             const ability = await fastify.axios.get(process.env.GAMESYSTEM_URL + `/abilities/${data.abilityName}`)
-                            console.log(ability.data)
                             conn.socket.send(JSON.stringify({ability: ability.data}))
                         } catch (e) {
                             conn.socket.send(JSON.stringify({message: 'Ошибка Апи'}))
