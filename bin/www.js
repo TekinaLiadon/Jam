@@ -2,6 +2,8 @@ import Fastify from 'fastify'
 import multer from 'fastify-multer'
 import dotenv from 'dotenv'
 import router from '../router/index.js'
+import pino from 'pino'
+import pinoPretty from 'pino-pretty'
 import dbConnector from '../database/index.js'
 import path from 'path'
 import {fileURLToPath} from 'url';
@@ -11,7 +13,9 @@ const __filename = fileURLToPath(import.meta.url),
 
 dotenv.config()
 const envToLogger = {
-    development: {
+    dev: {
+        level: 'warn',
+        prettifier: pinoPretty,
         transport: {
             target: 'pino-pretty',
             options: {
@@ -21,8 +25,17 @@ const envToLogger = {
         },
     },
     production: {
-        level: 'warn',
-        /*file: '/path/to/file'*/
+        level: 'error',
+        prettifier: pinoPretty,
+        transport: {
+            target: 'pino-pretty',
+            options: {
+                translateTime: 'HH:MM:ss Z',
+                ignore: 'pid,hostname',
+                colorize: false,
+                destination: path.join(__dirname, '..', 'logs' , 'server.log'),
+            },
+        },
     },
 }
 const fastify = Fastify({
@@ -100,6 +113,7 @@ fastify.addHook('preValidation', (req, reply, done) => {
     if(req.headers?.authorization || req.headers?.authorization?.length > 10) req.jwtVerify()
     done()
 })
+
 function normalizePort(val) {
     let port = parseInt(val, 10);
 
