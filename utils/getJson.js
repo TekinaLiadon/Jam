@@ -8,7 +8,7 @@ export default async function getJson(connection, data, user){
         connection
             .query(jsonCheck, [user.id, data])
             .then((result) => {
-                return JSON.parse(result[0].char_json)
+                return result[0] ? JSON.parse(result[0].char_json) : {}
             })
             .then((result) => {
                 resolve(result)

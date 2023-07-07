@@ -3,6 +3,7 @@ import getJson from "../../utils/getJson.js";
 export default async function handler(req, data, options){
     const connection = await options.mariadb.getConnection()
     const charJson = await getJson(connection, data.characterName, req.user)
+    if (Object.keys(charJson).length === 0) return {text: 'Персонаж не найден'}
     const state = {
         energyShieldsInfo: charJson?.energy_shield?.item?._id === data.energyShields,
         trinketInfo: charJson?.trinkets?.some((el) => el.trinket._id === data.trinketName),
@@ -22,7 +23,7 @@ export default async function handler(req, data, options){
         },
         holdableInfo: charJson?.main_item?.item?._id === data.holdable || charJson?.offhand_item?.item?._id === data.holdable,
     }
-    if (state[options.type]) {
+     if (state[options.type]) {
         try {
             const info = await options.axios.get(process.env.GAMESYSTEM_URL + options.url)
             return info.data
