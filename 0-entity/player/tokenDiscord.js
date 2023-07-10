@@ -2,9 +2,7 @@ export default {
     method: 'POST',
     url: '/api/token/discord',
     async handler(req, reply) {
-        var registrationSQL = `INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token) VALUES ( ?, ?, ?, ? )`
         var checkUser = `SELECT discord_id, id FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE discord_id = ? LIMIT 1`
-        var updateInfo = `UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ?, refresh_token = ? WHERE username = ? `
         var sub_infoReg = `INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id, group_json) VALUES ( ?, ?, ?, ?, ? )`
         var updateGuilds = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET group_json = ? WHERE id = ? `
         var blacklistCheck = `SELECT blacklist FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE discord_id = ? AND blacklist=1 LIMIT 1`
@@ -63,9 +61,11 @@ export default {
             .then(() => {
                 return info.insertId ?
                     connection
-                        .query(updateInfo, [info.access_token, info.refresh_token, info.id])
+                        .query(`UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ?, refresh_token = ? WHERE id = ?`,
+                            [info.access_token, info.refresh_token, info.insertId])
                     : connection
-                        .query(registrationSQL, [info.username, 'user', info.access_token, info.refresh_token])
+                        .query(`INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token, discord_id) VALUES ( ?, ?, ?, ?, ? )`,
+                            [info.username, 'user', info.access_token, info.refresh_token, info.id])
             })
             .then((result) => {
                 return info.insertId ?
@@ -79,10 +79,8 @@ export default {
                 connection.commit()
                 reply.send({
                     token: this.jwt.sign({
-                        username: info.id,
+                        discordId: info.id,
                         id: info.insertId,
-                        access_token: info.access_token,
-                        role: 'user',
                     }),
                 })
             })

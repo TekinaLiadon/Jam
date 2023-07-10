@@ -4,7 +4,7 @@ export default {
     method: 'POST',
     url: '/api/blacklist',
     async handler(req, reply) {
-        // Надо еще обнулять роль на юзера
+        if (req.body.API_KEY !== '11') reply.send({message: 'У вас нет прав'})
         var projectBan = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET blacklist = ? WHERE id = ?`
         var charactersBan = `UPDATE ${process.env.CHARACTER_TABLE_NAME} SET blacklist = ? WHERE id = ?`
         var userInfo = `SELECT id, role FROM ${process.env.CORE_TABLE_NAME} WHERE username = ? LIMIT 1`
