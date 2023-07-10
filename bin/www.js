@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url),
 dotenv.config()
 const envToLogger = {
     dev: {
-        level: 'warn',
+        level: 'info',
         prettifier: pinoPretty,
         transport: {
             target: 'pino-pretty',

@@ -2,11 +2,6 @@ export default {
     method: 'POST',
     url: '/api/token/discord',
     async handler(req, reply) {
-        var checkUser = `SELECT discord_id, id FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE discord_id = ? LIMIT 1`
-        var sub_infoReg = `INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id, group_json) VALUES ( ?, ?, ?, ?, ? )`
-        var updateGuilds = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET group_json = ? WHERE id = ? `
-        var blacklistCheck = `SELECT blacklist FROM ${process.env.ADDITIONAL_TABLE_NAME} WHERE discord_id = ? AND blacklist=1 LIMIT 1`
-
         var info = {}
         var redirectUri = 'http://localhost:8080/'
 
@@ -20,74 +15,83 @@ export default {
             scope: 'identify',
         })
         const connection = await this.mariadb.getConnection()
-        return await this.axios.post('https://discord.com/api/oauth2/token', postData, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-        })
-            .then(json => {
-                info = json.data
-                return Promise.all([
-                    this.axios.get('https://discord.com/api/users/@me', {
-                        headers: {
-                            authorization: `Bearer ${json.data.access_token}`
-                        }
-                    }),
-                    this.axios.get('https://discord.com/api/users/@me/guilds', {
-                        headers: {
-                            authorization: `Bearer ${json.data.access_token}`,
-                        },
-                    })
-                ])
+        try {
+            const discordToken = await this.axios.post('https://discord.com/api/oauth2/token', postData, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
             })
-            .then((result) => {
-                info = Object.assign(info, result[0].data)
-                const isServer = result[1].data.filter((item) => item.id == process.env.ID_DISCORD_SERVER)[0]?.id
-                if (isServer) return Promise.all([
-                    connection
-                        .query(checkUser, [result[0].data.id]),
-                    JSON.stringify(result[1].data),
-                    connection
-                        .query(blacklistCheck, [result[0].data.id]),
-                ])
-                else reply.code(401).send({message: 'Данная сущность не найдена на дискорд сервере'})
-            })
-            .then((result) => {
-                if (result[2].length > 0) reply.code(401).send({message: 'Пользователь забанен'})
-                info.insertId = result[0][0]?.id
-                info.guildJson = result[1]
-                return connection.beginTransaction()
-            })
-            .then(() => {
-                return info.insertId ?
-                    connection
-                        .query(`UPDATE ${process.env.CORE_TABLE_NAME} SET access_token = ?, refresh_token = ? WHERE id = ?`,
-                            [info.access_token, info.refresh_token, info.insertId])
-                    : connection
-                        .query(`INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token, discord_id) VALUES ( ?, ?, ?, ?, ? )`,
-                            [info.username, 'user', info.access_token, info.refresh_token, info.id])
-            })
-            .then((result) => {
-                return info.insertId ?
-                    connection
-                        .query(updateGuilds, [info.guildJson, parseInt(info.insertId, 10)])
-                    : connection
-                        .query(sub_infoReg, [parseInt(result.insertId, 10), info.email || null, 0, info.id, info.guildJson])
-                        .then(()=> info.insertId = parseInt(result.insertId, 10))
-            })
-            .then(() => {
-                connection.commit()
-                reply.send({
-                    token: this.jwt.sign({
-                        discordId: info.id,
-                        id: info.insertId,
-                    }),
+            info = discordToken.data
+
+            const discordGlobalInfo = await Promise.all([
+                this.axios.get('https://discord.com/api/users/@me', {
+                    headers: {
+                        authorization: `Bearer ${info.access_token}`
+                    }
+                }),
+                this.axios.get('https://discord.com/api/users/@me/guilds', {
+                    headers: {
+                        authorization: `Bearer ${info.access_token}`,
+                    },
                 })
+            ])
+            info = Object.assign(info, discordGlobalInfo[0].data)
+
+            const isServer = discordGlobalInfo[1].data.filter((item) => item.id == process.env.ID_DISCORD_SERVER)[0]?.id
+            if (!isServer) return reply.code(401).send({message: 'Данная сущность не найдена на дискорд сервере'})
+
+            const userStatusCheck = await Promise.all([
+                connection
+                    .query(`SELECT discord_id, id
+                            FROM ${process.env.ADDITIONAL_TABLE_NAME}
+                            WHERE discord_id = ? LIMIT 1`, [discordGlobalInfo[0].data.id]),
+                JSON.stringify(discordGlobalInfo[1].data),
+                connection
+                    .query(`SELECT blacklist
+                            FROM ${process.env.ADDITIONAL_TABLE_NAME}
+                            WHERE discord_id = ?
+                              AND blacklist = 1 LIMIT 1`, [discordGlobalInfo[0].data.id]),
+            ])
+            if (userStatusCheck[2].length > 0) return reply.code(401).send({message: 'Пользователь забанен'})
+            info.insertId = userStatusCheck[0][0]?.id
+            info.guildJson = userStatusCheck[1]
+            await connection.beginTransaction()
+
+            let insertInfo
+            info.insertId
+                ? await connection
+                    .query(`UPDATE ${process.env.CORE_TABLE_NAME}
+                            SET access_token = ?,
+                                refresh_token = ?
+                            WHERE id = ?`,
+                        [info.access_token, info.refresh_token, info.insertId])
+                : insertInfo = await connection
+                    .query(`INSERT INTO ${process.env.CORE_TABLE_NAME} (username, role, access_token, refresh_token, discord_id)
+                            VALUES (?, ?, ?, ?, ?)`,
+                        [info.username, 'user', info.access_token, info.refresh_token, info.id])
+
+            info.insertId
+                ? await connection
+                    .query(`UPDATE ${process.env.ADDITIONAL_TABLE_NAME}
+                            SET group_json = ?
+                            WHERE id = ? `,
+                        [info.guildJson, parseInt(info.insertId, 10)])
+                : await connection
+                    .query(`INSERT INTO ${process.env.ADDITIONAL_TABLE_NAME} (id, email, blacklist, discord_id, group_json)
+                            VALUES (?, ?, ?, ?, ?)`,
+                        [parseInt(insertInfo.insertId, 10), info.email || null, 0, info.id, info.guildJson])
+            if (insertInfo) info.insertId = parseInt(insertInfo.insertId, 10)
+            connection.commit()
+            connection.end()
+            return reply.send({
+                token: this.jwt.sign({
+                    discordId: info.id,
+                    id: info.insertId,
+                }),
             })
-            .catch((error) => {
-                reply.code(500).send(error)
-            })
-            .finally(() => connection.end())
+        } catch (e) {
+            return reply.code(520).send(e)
+        }
     },
     schema: {
         response: {
