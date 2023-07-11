@@ -18,7 +18,7 @@ import modifyMaxStat from "../0-entity/gm/entities/router/modifyMaxStat.js";
 import addNarrativePerk from "../0-entity/gm/entities/router/addNarrativePerk.js";
 import removeNarrativePerk from "../0-entity/gm/entities/router/removeNarrativePerk.js";
 import combat from "./Ws/combat.js";
-import parts from "../0-entity/gm/entities/parts.js";
+import parts from "../0-entity/gm/entities/router/parts.js";
 import addBodypart from "../0-entity/gm/entities/router/addBodypart.js";
 import addTrinket from "../0-entity/gm/entities/router/addTrinket.js";
 import trinketsList from "../0-entity/gm/items/router/trinketsList.js";

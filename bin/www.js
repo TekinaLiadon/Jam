@@ -110,7 +110,7 @@ fastify.addHook('preSerialization', (request, reply, payload, done) => {
     done(null, payload)
 })
 fastify.addHook('preValidation', (req, reply, done) => {
-    if(req.headers?.authorization || req.headers?.authorization?.length > 10) req.jwtVerify()
+    if(req.headers?.authorization || req.headers?.authorization?.length > 10) req.jwtVerify().catch((err) => req.log.info(err))
     done()
 })
 

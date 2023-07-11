@@ -4,37 +4,18 @@ export default {
     method: 'POST',
     url: '/api/blacklist',
     async handler(req, reply) {
-        if (req.body.API_KEY !== '11') reply.send({message: 'У вас нет прав'})
-        var projectBan = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET blacklist = ? WHERE id = ?`
-        var charactersBan = `UPDATE ${process.env.CHARACTER_TABLE_NAME} SET blacklist = ? WHERE id = ?`
-        var userInfo = `SELECT id, role FROM ${process.env.CORE_TABLE_NAME} WHERE username = ? LIMIT 1`
-        var roleCheck = `SELECT role FROM ${process.env.CORE_TABLE_NAME} WHERE id = ? LIMIT 1`
-        var connection = await this.mariadb.getConnection()
-        return await Promise.all([
-            connection.query(userInfo, [req.body.username]),
-            connection.query(roleCheck, [req.user.id]),
-        ])
-            .then((result) => {
-                if (roleList[result[1][0].role]?.level <= roleList[result[0][0].role]?.level) throw {
-                    message: 'Недостаточно прав',
-                    codeErr: 403,
-                }
-                else if (roleList[result[1][0].role]?.level >= 5) return req.body.command === 'ban' ?
-                    Promise.all([
-                        connection.query(projectBan, [1, result[0][0].id]),
-                        connection.query(charactersBan, [1, result[0][0].id]),
-                    ]) :
-                    connection.query(projectBan, [0, result[0][0].id])
-                else throw {
-                        message: 'Недостаточно прав',
-                        codeErr: 403,
-                    }
-            })
-            .then(() => {
-                return reply.send({message: 'Пользователь забанен/разбанен'})
-            })
-            .catch((err) => reply.code(err?.codeErr || 500).send(err))
-            .finally(() => connection.release())
+        if (req.body.apiKey !== '11') return reply.send({message: 'Неверный ключ'})
+        try {
+            var connection = await this.mariadb.getConnection()
+            var updateBlacklist = `UPDATE ${process.env.ADDITIONAL_TABLE_NAME} SET blacklist = ? WHERE id = ?`
+            var userId = await connection.query(`SELECT id FROM ${process.env.CORE_TABLE_NAME} WHERE discord_id = ? LIMIT 1`, [req.body.discordId])
+            req.body.command === 'ban' ? await connection.query(updateBlacklist, [1, userId[0]?.id])
+                : await connection.query(updateBlacklist, [0, userId[0]?.id])
+            connection.release()
+            return reply.send({message: 'Пользователь забанен/разбанен'})
+        } catch (e) {
+            return reply.code(520).send(e)
+        }
     },
     schema: {
         response: {
@@ -69,11 +50,14 @@ export default {
                 command: {
                     type: 'string',
                 },
-                username: {
+                apiKey: {
                     type: 'string',
                 },
+                discordId: {
+                    type: 'string'
+                }
             },
-            required: ['command', 'username'],
+            required: ['command', 'discordId', 'apiKey'],
         }
     }
 }
