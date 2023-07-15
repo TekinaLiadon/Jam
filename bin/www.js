@@ -2,14 +2,9 @@ import Fastify from 'fastify'
 import multer from 'fastify-multer'
 import dotenv from 'dotenv'
 import router from '../router/index.js'
-import pino from 'pino'
 import pinoPretty from 'pino-pretty'
 import dbConnector from '../database/index.js'
-import path from 'path'
-import {fileURLToPath} from 'url';
-
-const __filename = fileURLToPath(import.meta.url),
-    __dirname = path.dirname(__filename);
+import node from "./node.js";
 
 dotenv.config()
 const envToLogger = {
@@ -33,7 +28,7 @@ const envToLogger = {
                 translateTime: 'HH:MM:ss Z',
                 ignore: 'pid,hostname',
                 colorize: false,
-                destination: path.join(__dirname, '..', 'logs' , 'server.log'),
+                destination: node.path.join(node.dirname, '..', 'logs' , 'server.log'),
             },
         },
     },
@@ -78,7 +73,7 @@ await fastify.register(dbConnector, {
     .register(multer.contentParser)
     .register(router)
     .register(import('@fastify/static'), {
-        root: path.join(__dirname, '..', 'public'),
+        root: node.path.join(node.dirname, '..', 'public'),
     })
     .setNotFoundHandler((req, res) => {
         if (req.raw.url && req.raw.url.startsWith("/api")) {
@@ -90,9 +85,9 @@ await fastify.register(dbConnector, {
                 },
             });
         }
-        else if (req.raw.url && req.raw.url.startsWith("/skins")) return res.sendFile(`${req.raw.url.slice(7)}.png`, path.join(__dirname, '..', 'public' , 'skins'))
-        else if (req.raw.url === '/launcher/Stargazer.exe') return res.sendFile(`Stargazer.exe`, path.join(__dirname, '..', 'public' , 'launcher'))
-        else if (req.raw.url === '/launcher/Stargazer.jar') return res.sendFile(`Stargazer.jar`, path.join(__dirname, '..', 'public' , 'launcher'))
+        else if (req.raw.url && req.raw.url.startsWith("/skins")) return res.sendFile(`${req.raw.url.slice(7)}.png`, node.path.join(node.dirname, '..', 'public' , 'skins'))
+        else if (req.raw.url === '/launcher/Stargazer.exe') return res.sendFile(`Stargazer.exe`, node.path.join(node.dirname, '..', 'public' , 'launcher'))
+        else if (req.raw.url === '/launcher/Stargazer.jar') return res.sendFile(`Stargazer.jar`, node.path.join(node.dirname, '..', 'public' , 'launcher'))
         else res.status(200).sendFile("index.html");
     })
 
