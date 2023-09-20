@@ -66,7 +66,7 @@ export default {
                 )
             })
             .then(() => {
-                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/wear_armor',
+                return this.axios.post(process.env.GAMESYSTEM_URL + '/entities/wear_wearable',
                     JSON.stringify({
                         entity: req.body.entityName,
                         wearable: 'kaska',

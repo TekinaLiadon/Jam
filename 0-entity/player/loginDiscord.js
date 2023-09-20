@@ -2,8 +2,8 @@ export default {
     method: 'GET',
     url: '/api/login/discord',
     async handler(req, reply) {
-        if(req.query.redirect_url) {
-            const redirect = await encodeURI(req.query.redirect_url)
+        if(req.query?.redirect_url) {
+            const redirect = await encodeURI(req.query?.redirect_url)
             return await reply.send({
                 url: `https://discordapp.com/api/oauth2/authorize?client_id=${process.env.DISCORD_ID}&scope=identify%20email%20guilds%20guilds&response_type=code&redirect_uri=${redirect}`
             })

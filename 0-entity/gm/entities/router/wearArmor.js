@@ -9,7 +9,7 @@ export default {
             var connection = await this.mariadb.getConnection()
             var role = await roleCheck(connection, req.user.id)
             if (roleList[role]?.level < 5) return reply.code(403).send({text: 'Недостаточно прав'})
-            var info = await this.axios.post(process.env.GAMESYSTEM_URL + '/entities/wear_armor',
+            var info = await this.axios.post(process.env.GAMESYSTEM_URL + '/entities/wear_wearable',
                 JSON.stringify({
                     entity: req.body.entityName,
                     wearable: req.body.wearable,

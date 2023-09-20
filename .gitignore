@@ -7,6 +7,7 @@ yarn-error.log*
 lerna-debug.log*
 
 .env
+private_key.ppk
 
 public/launcher
 

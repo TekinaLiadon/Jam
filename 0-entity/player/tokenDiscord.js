@@ -87,6 +87,8 @@ export default {
                 token: this.jwt.sign({
                     discordId: info.id,
                     id: info.insertId,
+                }, {
+                    expiresIn: 67843200,
                 }),
             })
         } catch (e) {
