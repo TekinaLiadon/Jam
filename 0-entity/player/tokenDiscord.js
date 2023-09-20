@@ -3,7 +3,6 @@ export default {
     url: '/api/token/discord',
     async handler(req, reply) {
         var info = {}
-        var redirectUri = 'http://localhost:8080/'
 
         const querystring = await import('querystring');
         const postData = await querystring.stringify({
@@ -11,7 +10,7 @@ export default {
             client_secret: process.env.DISCORD_SECRET,
             code: req.body.discordCode,
             grant_type: 'authorization_code',
-            redirect_uri: redirectUri || process.env.WEBSITE_URL, // TODO Убрать когда будет релиз
+            redirect_uri: req.body?.redirect_url || process.env.WEBSITE_URL,
             scope: 'identify',
         })
         const connection = await this.mariadb.getConnection()
