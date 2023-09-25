@@ -3,7 +3,7 @@ export default {
     url: '/api/charactersList',
     async handler(req, reply) {
         const connection = await this.mariadb.getConnection()
-        var characterCheck = `SELECT character_name, skin, uuid FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
+        var characterCheck = `SELECT character_name, skin, uuid, verified, is_initialized FROM ${process.env.CHARACTER_TABLE_NAME} WHERE id = ?`
         return Promise.all([
             this.axios.get(process.env.GAMESYSTEM_URL + '/characters'),
             connection
@@ -17,7 +17,9 @@ export default {
                         return {
                             name: item.name,
                             display_name: item.display_name,
-                            skin: `https://tardigrade.ariadna.su/skins/${result[1].find((el) => el.uuid === item.uuid).skin}`
+                            skin: `https://tardigrade.ariadna.su/skins/${result[1].find((el) => el.uuid === item.uuid).skin}`,
+                            verified: !!item.verified,
+                            isInitialized: !!item.is_initialized,
                         }
                     })
                     reply.send(info)
@@ -53,6 +55,12 @@ export default {
                         },
                         skin: {
                             type: 'string',
+                        },
+                        verified: {
+                            type: 'boolean',
+                        },
+                        isInitialized: {
+                            type: 'boolean',
                         },
                     },
                 }
