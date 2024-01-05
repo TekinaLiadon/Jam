@@ -49,7 +49,6 @@ function fastifyMariadb (fastify, options, next) {
 
 function _createConnection ({ fastify, connectionType, options, usePromise }, cb) {
     let client = {}
-
     if (connectionType !== 'connection') {
         client = mariadb.createPool(options.connectionString || options)
 
